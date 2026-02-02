@@ -1,12 +1,14 @@
-use actix_web::{middleware::Logger, web, App, HttpServer};
 use actix_cors::Cors;
 use actix_web::http::header;
-use dotenv::dotenv;
-use env_logger::{Builder, Env};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use chrono::Local;
 use config_env::ConfigService;
 use database::config::init;
-use graphql::{build_schema, StrapiClient, graphql_handler, graphql_playground, strapi_proxy_handler};
+use dotenv::dotenv;
+use env_logger::{Builder, Env};
+use graphql::{
+    build_schema, graphql_handler, graphql_playground, strapi_proxy_handler, StrapiClient,
+};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -36,7 +38,7 @@ async fn main() -> std::io::Result<()> {
     let port = cfg.port;
 
     // Initialize Strapi GraphQL client
-    let strapi_client = StrapiClient::new("https://strapiarticle-production.up.railway.app/graphql".to_string());
+    let strapi_client = StrapiClient::new(format!("{}/graphql", cfg.strapi_api));
 
     // Build GraphQL schema
     let schema = build_schema(strapi_client.clone());
@@ -46,15 +48,19 @@ async fn main() -> std::io::Result<()> {
             .allowed_origin_fn(|origin, _req| {
                 let origin_str = origin.to_str().unwrap_or("");
                 // Allow all localhost and 127.0.0.1 with any port
-                origin_str.starts_with("http://localhost:") ||
-                origin_str.starts_with("http://127.0.0.1:") ||
-                origin_str == "http://localhost" ||
-                origin_str == "http://127.0.0.1"
+                origin_str.starts_with("http://localhost:")
+                    || origin_str.starts_with("http://127.0.0.1:")
+                    || origin_str == "http://localhost"
+                    || origin_str == "http://127.0.0.1"
             })
             .allowed_origin("https://tevet-troc-client.vercel.app")
             .allowed_origin("https://nsdhso.github.io")
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"])
-            .allowed_headers(vec![header::CONTENT_TYPE, header::ACCEPT, header::AUTHORIZATION])
+            .allowed_headers(vec![
+                header::CONTENT_TYPE,
+                header::ACCEPT,
+                header::AUTHORIZATION,
+            ])
             .supports_credentials();
 
         App::new()
@@ -63,21 +69,13 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(schema.clone()))
             .app_data(web::Data::new(strapi_client.clone()))
             .wrap(Logger::default())
-            .service(
-                web::scope("/v1")
-                    .service(
-                        web::scope("")
-                    ),
-            )
+            .service(web::scope("/v1").service(web::scope("")))
             .service(
                 web::resource("/graphql")
                     .route(web::post().to(graphql_handler))
-                    .route(web::get().to(graphql_playground))
+                    .route(web::get().to(graphql_playground)),
             )
-            .service(
-                web::resource("/strapi-proxy")
-                    .route(web::post().to(strapi_proxy_handler))
-            )
+            .service(web::resource("/strapi-proxy").route(web::post().to(strapi_proxy_handler)))
     })
     .bind(format!("{host}:{port}"))
     .unwrap_or_else(|_| panic!("Failed to bind to {host}:{port}"));

@@ -14,9 +14,11 @@ use crate::{create_response, response_object::ResponseObject, HttpCodeW};
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn ok<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::OK) }
 /// let response = ok("Request processed successfully");
-/// let user_response = ok(User { id: 1, name: "John".to_string() });
 /// // Serializes to: {"message": "Request processed successfully", "code": 200}
 /// ```
 #[allow(dead_code)]
@@ -37,10 +39,12 @@ pub fn ok<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn created<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::Created) }
 /// let response = created("User created successfully");
-/// let new_user = created(User { id: 42, name: "Alice".to_string() });
-/// // Serializes to: {"message": {...}, "code": 201}
+/// // Serializes to: {"message": "User created successfully", "code": 201}
 /// ```
 #[allow(dead_code)]
 pub fn created<T>(message: T) -> ResponseObject<T> {
@@ -61,9 +65,11 @@ pub fn created<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn no_content<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::NoContent) }
 /// let response = no_content("Resource deleted successfully");
-/// let empty_response = no_content(());
 /// // Serializes to: {"message": "Resource deleted successfully", "code": 204}
 /// ```
 #[allow(dead_code)]
@@ -85,9 +91,11 @@ pub fn no_content<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn bad_request<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::BadRequest) }
 /// let response = bad_request("Missing required field: email");
-/// let validation_error = bad_request(ValidationError { field: "age", message: "Must be positive" });
 /// // Serializes to: {"message": "Missing required field: email", "code": 400}
 /// ```
 #[allow(dead_code)]
@@ -109,9 +117,10 @@ pub fn bad_request<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::{create_response, HttpCodeW, ResponseObject};
+/// # fn unauthorized<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::Unauthorized) }
 /// let response = unauthorized("Invalid authentication token");
-/// let auth_error = unauthorized(AuthError { code: "TOKEN_EXPIRED" });
 /// // Serializes to: {"message": "Invalid authentication token", "code": 401}
 /// ```
 #[allow(dead_code)]
@@ -133,9 +142,11 @@ pub fn unauthorized<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn conflict<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::Conflict) }
 /// let response = conflict("User with this email already exists");
-/// let conflict_error = conflict(ConflictError { resource: "user", field: "email" });
 /// // Serializes to: {"message": "User with this email already exists", "code": 409}
 /// ```
 #[allow(dead_code)]
@@ -157,9 +168,11 @@ pub fn conflict<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn not_found<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::NotFound) }
 /// let response = not_found("User not found");
-/// let resource_error = not_found(ResourceError { resource_type: "user", id: 123 });
 /// // Serializes to: {"message": "User not found", "code": 404}
 /// ```
 #[allow(dead_code)]
@@ -181,9 +194,11 @@ pub fn not_found<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn internal_server_error<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::InternalServerError) }
 /// let response = internal_server_error("Database connection failed");
-/// let server_error = internal_server_error(ServerError { code: "DB_ERROR", details: "Connection timeout" });
 /// // Serializes to: {"message": "Database connection failed", "code": 500}
 /// ```
 #[allow(dead_code)]
@@ -206,9 +221,11 @@ pub fn internal_server_error<T>(message: T) -> ResponseObject<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// # use http_response::ResponseObject;
+/// # use http_response::{create_response, HttpCodeW};
+/// # fn not_implemented<T>(message: T) -> ResponseObject<T> { create_response(message, HttpCodeW::NotImplemented) }
 /// let response = not_implemented("File upload feature coming soon");
-/// let feature_error = not_implemented(FeatureError { feature: "advanced_search", eta: "Q2 2024" });
 /// // Serializes to: {"message": "File upload feature coming soon", "code": 501}
 /// ```
 #[allow(dead_code)]

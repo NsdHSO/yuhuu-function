@@ -15,9 +15,10 @@ use crate::{response_object::ResponseObject, HttpCodeW};
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```
+/// use http_response::{create_response, HttpCodeW};
+///
 /// let response = create_response("Custom message", HttpCodeW::OK);
-/// let custom_response = create_response(CustomData { value: 42 }, HttpCodeW::Accepted);
 /// // Serializes to: {"message": "Custom message", "code": 200}
 /// ```
 pub fn create_response<T>(message: T, code: HttpCodeW) -> ResponseObject<T> {

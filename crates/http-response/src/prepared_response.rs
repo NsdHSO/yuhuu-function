@@ -29,37 +29,23 @@ use crate::{error_handler::CustomError, http_response_builder};
 ///
 /// # Examples
 ///
-/// ```rust
-/// use actix_web::{HttpResponse, web};
+/// ```no_run
+/// use actix_web::HttpResponse;
 /// use serde::Serialize;
-/// use crate::http_response::error_handler::CustomError;
-/// use crate::http_response::http_response_builder;
+/// use http_response::{CustomError, HttpCodeW, prepared_response::check_response_ok_or_return_error};
 ///
 /// #[derive(Serialize)]
-/// pub struct UserProfile {
-///     pub id: i32,
-///     pub username: String,
+/// struct UserProfile {
+///     id: i32,
+///     username: String,
 /// }
 ///
-/// /// A mock service function that returns either a successful result or an error.
-/// async fn get_user_from_db(user_id: i32) -> Result<UserProfile, CustomError> {
-///     if user_id > 0 {
-///         Ok(UserProfile { id: user_id, username: "test_user".to_string() })
-///     } else {
-///         Err(CustomError::NotFound("User not found".to_string()))
-///     }
-/// }
-///
-/// /// An actix-web handler that uses the helper function.
-/// pub async fn get_user_handler(
-///     path: web::Path<i32>,
-/// ) -> Result<HttpResponse, CustomError> {
-///     let user_id = path.into_inner();
-///
-///     // The service call returns a Result
-///     let user_result = get_user_from_db(user_id).await;
-///
-///     // The helper function handles the conversion to HttpResponse for us
+/// async fn get_user_handler() -> Result<HttpResponse, CustomError> {
+///     let user_result: Result<UserProfile, CustomError> = Ok(UserProfile {
+///         id: 1,
+///         username: "test_user".to_string()
+///     });
+///     
 ///     check_response_ok_or_return_error(user_result)
 /// }
 /// ```

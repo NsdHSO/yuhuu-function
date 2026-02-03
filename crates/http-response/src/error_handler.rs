@@ -151,9 +151,7 @@ impl<T: serde::de::DeserializeOwned + 'static> FromRequest for ValidatedJson<T> 
                 Err(err) => {
                     // If it's a deserialization error, convert it to our
                     // custom error type.
-                    let message = match err {
-                        _ => format!("JSON payload error: {}", err),
-                    };
+                    let message = format!("JSON payload error: {}", err);
                     // Return a `CustomError` with a 400 Bad Request status.
                     Err(CustomError::new(HttpCodeW::BadRequest, message))
                 }

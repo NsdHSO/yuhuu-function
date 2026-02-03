@@ -12,7 +12,7 @@ serde_json = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true }
 anyhow = { workspace = true }
-dotenv = { workspace = true }
+dotenvy = { workspace = true }
 sea-orm = { workspace = true }
 chrono = { workspace = true }
 actix-cors = "0.7"

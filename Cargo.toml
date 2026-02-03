@@ -20,7 +20,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 actix-rt = "2.10.0"
 actix-web = "4.10.2"
 chrono = { version = "0.4.41", features = ["serde"] }
-dotenv = "0.15.0"
+dotenvy = "0.15"
 tokio = { version = "1", features = ["full"] }
 env_logger = "0.11.8"
 listenfd = "1.0.2"

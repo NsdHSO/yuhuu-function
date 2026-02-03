@@ -4,7 +4,7 @@ use actix_web::{middleware::Logger, web, App, HttpServer};
 use chrono::Local;
 use config_env::ConfigService;
 use database::config::init;
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use env_logger::{Builder, Env};
 use graphql::{
     build_schema, graphql_handler, graphql_playground, strapi_proxy_handler, StrapiClient,

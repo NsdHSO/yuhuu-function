@@ -1,5 +1,4 @@
-use crate::{HttpCodeW, create_response, response_object::ResponseObject};
-
+use crate::{create_response, response_object::ResponseObject, HttpCodeW};
 
 /// Creates a successful HTTP response with status code 200 OK.
 ///

@@ -18,7 +18,12 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(CellGroups::Uuid).uuid().not_null().unique_key())
+                    .col(
+                        ColumnDef::new(CellGroups::Uuid)
+                            .uuid()
+                            .not_null()
+                            .unique_key(),
+                    )
                     .col(ColumnDef::new(CellGroups::Name).string().not_null())
                     .col(ColumnDef::new(CellGroups::Description).text())
                     .col(ColumnDef::new(CellGroups::ZoneId).big_integer().not_null())
@@ -28,22 +33,49 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(CellGroups::MeetingTime).time())
                     .col(ColumnDef::new(CellGroups::MeetingLocation).string())
                     .col(ColumnDef::new(CellGroups::MaxCapacity).integer())
-                    .col(ColumnDef::new(CellGroups::IsActive).boolean().not_null().default(true))
-                    .col(ColumnDef::new(CellGroups::CreatedAt).timestamp().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(CellGroups::UpdatedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(CellGroups::IsActive)
+                            .boolean()
+                            .not_null()
+                            .default(true),
+                    )
+                    .col(
+                        ColumnDef::new(CellGroups::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(CellGroups::UpdatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_cell_groups_zone_id")
-                            .from((Alias::new("church"), CellGroups::Table), CellGroups::ZoneId)
-                            .to((Alias::new("church"), Alias::new("zones")), Alias::new("id"))
+                            .from(
+                                (Alias::new("church"), CellGroups::Table),
+                                CellGroups::ZoneId,
+                            )
+                            .to(
+                                (Alias::new("church"), Alias::new("zones")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_cell_groups_leader_id")
-                            .from((Alias::new("church"), CellGroups::Table), CellGroups::LeaderId)
-                            .to((Alias::new("church"), Alias::new("users")), Alias::new("id"))
+                            .from(
+                                (Alias::new("church"), CellGroups::Table),
+                                CellGroups::LeaderId,
+                            )
+                            .to(
+                                (Alias::new("church"), Alias::new("users")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::SetNull)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -54,7 +86,11 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table((Alias::new("church"), CellGroups::Table)).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), CellGroups::Table))
+                    .to_owned(),
+            )
             .await
     }
 }

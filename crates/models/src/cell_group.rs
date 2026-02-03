@@ -13,9 +13,9 @@ pub struct Model {
     pub name: String,
     pub description: Option<String>,
     pub zone_id: i64,
-    pub leader_id: Option<i64>, // References users.id
+    pub leader_id: Option<i64>,               // References users.id
     pub assistant_leader_ids: Option<String>, // JSON array of user IDs
-    pub meeting_day: Option<String>, // Monday, Tuesday, etc.
+    pub meeting_day: Option<String>,          // Monday, Tuesday, etc.
     pub meeting_time: Option<Time>,
     pub meeting_location: Option<String>,
     pub max_capacity: Option<i32>,

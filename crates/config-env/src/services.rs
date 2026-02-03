@@ -52,7 +52,11 @@ impl ConfigService {
             postgres_db: Self::get_value(&secrets, "POSTGRES_DB", ""),
             postgres_password: Self::get_value(&secrets, "POSTGRES_PASSWORD", ""),
             postgres_user: Self::get_value(&secrets, "POSTGRES_USER", ""),
-            railway_deployment_draining_seconds: Self::get_value(&secrets, "RAILWAY_DEPLOYMENT_DRAINING_SECONDS", ""),
+            railway_deployment_draining_seconds: Self::get_value(
+                &secrets,
+                "RAILWAY_DEPLOYMENT_DRAINING_SECONDS",
+                "",
+            ),
             rust_log: Self::get_value(&secrets, "RUST_LOG", "info"),
             sqlx_log: Self::get_value(&secrets, "SQLX_LOG", "false")
                 .parse()
@@ -76,7 +80,9 @@ impl ConfigService {
         let project = match std::env::var("DOPPLER_PROJECT") {
             Ok(p) if !p.is_empty() => p,
             _ => {
-                eprintln!("DOPPLER_PROJECT not set; cannot query Doppler. Falling back to local env.");
+                eprintln!(
+                    "DOPPLER_PROJECT not set; cannot query Doppler. Falling back to local env."
+                );
                 return None;
             }
         };
@@ -118,7 +124,7 @@ impl ConfigService {
         ];
 
         let mut out: HashMap<String, String> = HashMap::new();
-        for key in keys {            
+        for key in keys {
             match default_api::secrets_get(&cfg, &project, &config_name, key).await {
                 Ok(resp) => {
                     if let Some(val) = resp
@@ -138,7 +144,9 @@ impl ConfigService {
         }
 
         if out.is_empty() {
-            println!("No secrets fetched from Doppler, falling back to local environment variables");
+            println!(
+                "No secrets fetched from Doppler, falling back to local environment variables"
+            );
             None
         } else {
             println!("Successfully fetched {} secrets from Doppler", out.len());

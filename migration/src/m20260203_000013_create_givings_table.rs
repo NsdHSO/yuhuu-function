@@ -22,25 +22,53 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Givings::UserId).big_integer().not_null())
                     .col(ColumnDef::new(Givings::GivingType).string().not_null())
                     .col(ColumnDef::new(Givings::Amount).decimal().not_null())
-                    .col(ColumnDef::new(Givings::Currency).string().not_null().default("USD"))
+                    .col(
+                        ColumnDef::new(Givings::Currency)
+                            .string()
+                            .not_null()
+                            .default("USD"),
+                    )
                     .col(ColumnDef::new(Givings::GivingDate).date().not_null())
                     .col(ColumnDef::new(Givings::PaymentMethod).string().not_null())
                     .col(ColumnDef::new(Givings::ReferenceNumber).string())
                     .col(ColumnDef::new(Givings::ReceiptNumber).string())
                     .col(ColumnDef::new(Givings::FundCategory).string())
-                    .col(ColumnDef::new(Givings::IsRecurring).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(Givings::IsRecurring)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .col(ColumnDef::new(Givings::RecurringFrequency).string())
                     .col(ColumnDef::new(Givings::VerifiedBy).big_integer())
                     .col(ColumnDef::new(Givings::VerifiedAt).timestamp())
-                    .col(ColumnDef::new(Givings::IsTaxDeductible).boolean().not_null().default(true))
+                    .col(
+                        ColumnDef::new(Givings::IsTaxDeductible)
+                            .boolean()
+                            .not_null()
+                            .default(true),
+                    )
                     .col(ColumnDef::new(Givings::Notes).text())
-                    .col(ColumnDef::new(Givings::CreatedAt).timestamp().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Givings::UpdatedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(Givings::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Givings::UpdatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_givings_user_id")
                             .from((Alias::new("church"), Givings::Table), Givings::UserId)
-                            .to((Alias::new("church"), Alias::new("users")), Alias::new("id"))
+                            .to(
+                                (Alias::new("church"), Alias::new("users")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -48,7 +76,10 @@ impl MigrationTrait for Migration {
                         ForeignKey::create()
                             .name("fk_givings_verified_by")
                             .from((Alias::new("church"), Givings::Table), Givings::VerifiedBy)
-                            .to((Alias::new("church"), Alias::new("users")), Alias::new("id"))
+                            .to(
+                                (Alias::new("church"), Alias::new("users")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::SetNull)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -84,7 +115,11 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table((Alias::new("church"), Givings::Table)).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), Givings::Table))
+                    .to_owned(),
+            )
             .await
     }
 }

@@ -18,19 +18,42 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(UserRoles::Uuid).uuid().not_null().unique_key())
+                    .col(
+                        ColumnDef::new(UserRoles::Uuid)
+                            .uuid()
+                            .not_null()
+                            .unique_key(),
+                    )
                     .col(ColumnDef::new(UserRoles::UserId).big_integer().not_null())
                     .col(ColumnDef::new(UserRoles::RoleId).big_integer().not_null())
                     .col(ColumnDef::new(UserRoles::AssignedDate).date().not_null())
                     .col(ColumnDef::new(UserRoles::AssignedBy).big_integer())
-                    .col(ColumnDef::new(UserRoles::IsActive).boolean().not_null().default(true))
-                    .col(ColumnDef::new(UserRoles::CreatedAt).timestamp().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserRoles::UpdatedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(UserRoles::IsActive)
+                            .boolean()
+                            .not_null()
+                            .default(true),
+                    )
+                    .col(
+                        ColumnDef::new(UserRoles::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(UserRoles::UpdatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_user_roles_user_id")
                             .from((Alias::new("church"), UserRoles::Table), UserRoles::UserId)
-                            .to((Alias::new("church"), Alias::new("users")), Alias::new("id"))
+                            .to(
+                                (Alias::new("church"), Alias::new("users")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -38,15 +61,24 @@ impl MigrationTrait for Migration {
                         ForeignKey::create()
                             .name("fk_user_roles_role_id")
                             .from((Alias::new("church"), UserRoles::Table), UserRoles::RoleId)
-                            .to((Alias::new("church"), Alias::new("roles")), Alias::new("id"))
+                            .to(
+                                (Alias::new("church"), Alias::new("roles")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_user_roles_assigned_by")
-                            .from((Alias::new("church"), UserRoles::Table), UserRoles::AssignedBy)
-                            .to((Alias::new("church"), Alias::new("users")), Alias::new("id"))
+                            .from(
+                                (Alias::new("church"), UserRoles::Table),
+                                UserRoles::AssignedBy,
+                            )
+                            .to(
+                                (Alias::new("church"), Alias::new("users")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::SetNull)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -72,7 +104,11 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table((Alias::new("church"), UserRoles::Table)).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), UserRoles::Table))
+                    .to_owned(),
+            )
             .await
     }
 }

@@ -1,11 +1,5 @@
 use actix_web::{
-    dev::Payload,
-    web,
-    FromRequest,
-    HttpRequest,
-    HttpResponse,
-    ResponseError,
-    http::StatusCode,
+    dev::Payload, http::StatusCode, web, FromRequest, HttpRequest, HttpResponse, ResponseError,
 };
 use futures_util::future::LocalBoxFuture;
 use sea_orm::DbErr;
@@ -13,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::error::Error as StdError;
 use std::fmt;
 
-use crate::{HttpCodeW, create_response};
+use crate::{create_response, HttpCodeW};
 
 // Assuming you have this module for your custom HTTP response.
 // This is not provided, but is necessary for the code to compile.
@@ -161,14 +155,9 @@ impl<T: serde::de::DeserializeOwned + 'static> FromRequest for ValidatedJson<T> 
                         _ => format!("JSON payload error: {}", err),
                     };
                     // Return a `CustomError` with a 400 Bad Request status.
-                    Err(CustomError::new(
-                        HttpCodeW::BadRequest,
-                        message,
-                    ))
+                    Err(CustomError::new(HttpCodeW::BadRequest, message))
                 }
             }
         })
     }
 }
-
-

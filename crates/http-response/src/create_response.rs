@@ -1,6 +1,4 @@
-use crate::{HttpCodeW, response_object::ResponseObject};
-
-
+use crate::{response_object::ResponseObject, HttpCodeW};
 
 /// Creates a ResponseObject with the provided message and HTTP status code.
 ///

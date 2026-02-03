@@ -22,7 +22,7 @@ pub struct Model {
 
     // Demographics
     pub date_of_birth: Option<Date>,
-    pub gender: Option<String>, // Male, Female
+    pub gender: Option<String>,         // Male, Female
     pub marital_status: Option<String>, // Single, Married, Widowed, Divorced
     pub occupation: Option<String>,
     pub nationality: Option<String>,

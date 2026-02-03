@@ -1,6 +1,6 @@
+use crate::{GraphQLSchema, StrapiClient};
 use actix_web::{web, HttpResponse, Result};
 use async_graphql_actix_web::{GraphQLRequest, GraphQLResponse};
-use crate::{GraphQLSchema, StrapiClient};
 use serde_json::json;
 
 /// GraphQL query handler
@@ -16,7 +16,8 @@ pub async fn strapi_proxy_handler(
     strapi_client: web::Data<StrapiClient>,
     body: web::Json<serde_json::Value>,
 ) -> Result<HttpResponse> {
-    let query = body.get("query")
+    let query = body
+        .get("query")
         .and_then(|q| q.as_str())
         .ok_or_else(|| actix_web::error::ErrorBadRequest("Missing query field"))?;
 

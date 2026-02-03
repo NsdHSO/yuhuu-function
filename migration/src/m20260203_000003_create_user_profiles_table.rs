@@ -18,8 +18,18 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(UserProfiles::Uuid).uuid().not_null().unique_key())
-                    .col(ColumnDef::new(UserProfiles::UserId).big_integer().not_null().unique_key())
+                    .col(
+                        ColumnDef::new(UserProfiles::Uuid)
+                            .uuid()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .col(
+                        ColumnDef::new(UserProfiles::UserId)
+                            .big_integer()
+                            .not_null()
+                            .unique_key(),
+                    )
                     .col(ColumnDef::new(UserProfiles::MiddleName).string())
                     .col(ColumnDef::new(UserProfiles::Phone).string())
                     .col(ColumnDef::new(UserProfiles::PhoneSecondary).string())
@@ -33,13 +43,29 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(UserProfiles::EmergencyContactRelationship).string())
                     .col(ColumnDef::new(UserProfiles::ProfilePictureUrl).string())
                     .col(ColumnDef::new(UserProfiles::Bio).text())
-                    .col(ColumnDef::new(UserProfiles::CreatedAt).timestamp().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserProfiles::UpdatedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(UserProfiles::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(UserProfiles::UpdatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_user_profiles_user_id")
-                            .from((Alias::new("church"), UserProfiles::Table), UserProfiles::UserId)
-                            .to((Alias::new("church"), Alias::new("users")), Alias::new("id"))
+                            .from(
+                                (Alias::new("church"), UserProfiles::Table),
+                                UserProfiles::UserId,
+                            )
+                            .to(
+                                (Alias::new("church"), Alias::new("users")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -50,7 +76,11 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table((Alias::new("church"), UserProfiles::Table)).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), UserProfiles::Table))
+                    .to_owned(),
+            )
             .await
     }
 }

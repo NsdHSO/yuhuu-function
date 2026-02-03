@@ -18,27 +18,67 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(UserMinistries::Uuid).uuid().not_null().unique_key())
-                    .col(ColumnDef::new(UserMinistries::UserId).big_integer().not_null())
-                    .col(ColumnDef::new(UserMinistries::MinistryId).big_integer().not_null())
+                    .col(
+                        ColumnDef::new(UserMinistries::Uuid)
+                            .uuid()
+                            .not_null()
+                            .unique_key(),
+                    )
+                    .col(
+                        ColumnDef::new(UserMinistries::UserId)
+                            .big_integer()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(UserMinistries::MinistryId)
+                            .big_integer()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(UserMinistries::Position).string())
                     .col(ColumnDef::new(UserMinistries::JoinDate).date().not_null())
-                    .col(ColumnDef::new(UserMinistries::IsActive).boolean().not_null().default(true))
-                    .col(ColumnDef::new(UserMinistries::CreatedAt).timestamp().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(UserMinistries::UpdatedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(UserMinistries::IsActive)
+                            .boolean()
+                            .not_null()
+                            .default(true),
+                    )
+                    .col(
+                        ColumnDef::new(UserMinistries::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(UserMinistries::UpdatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_user_ministries_user_id")
-                            .from((Alias::new("church"), UserMinistries::Table), UserMinistries::UserId)
-                            .to((Alias::new("church"), Alias::new("users")), Alias::new("id"))
+                            .from(
+                                (Alias::new("church"), UserMinistries::Table),
+                                UserMinistries::UserId,
+                            )
+                            .to(
+                                (Alias::new("church"), Alias::new("users")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_user_ministries_ministry_id")
-                            .from((Alias::new("church"), UserMinistries::Table), UserMinistries::MinistryId)
-                            .to((Alias::new("church"), Alias::new("ministries")), Alias::new("id"))
+                            .from(
+                                (Alias::new("church"), UserMinistries::Table),
+                                UserMinistries::MinistryId,
+                            )
+                            .to(
+                                (Alias::new("church"), Alias::new("ministries")),
+                                Alias::new("id"),
+                            )
                             .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
@@ -64,7 +104,11 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table((Alias::new("church"), UserMinistries::Table)).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), UserMinistries::Table))
+                    .to_owned(),
+            )
             .await
     }
 }

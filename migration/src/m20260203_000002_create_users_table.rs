@@ -21,13 +21,38 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Users::Uuid).uuid().not_null().unique_key())
                     .col(ColumnDef::new(Users::FirstName).string().not_null())
                     .col(ColumnDef::new(Users::LastName).string().not_null())
-                    .col(ColumnDef::new(Users::Email).string().not_null().unique_key())
+                    .col(
+                        ColumnDef::new(Users::Email)
+                            .string()
+                            .not_null()
+                            .unique_key(),
+                    )
                     .col(ColumnDef::new(Users::PasswordHash).string().not_null())
-                    .col(ColumnDef::new(Users::IsActive).boolean().not_null().default(true))
-                    .col(ColumnDef::new(Users::IsEmailVerified).boolean().not_null().default(false))
+                    .col(
+                        ColumnDef::new(Users::IsActive)
+                            .boolean()
+                            .not_null()
+                            .default(true),
+                    )
+                    .col(
+                        ColumnDef::new(Users::IsEmailVerified)
+                            .boolean()
+                            .not_null()
+                            .default(false),
+                    )
                     .col(ColumnDef::new(Users::EmailVerifiedAt).timestamp())
-                    .col(ColumnDef::new(Users::CreatedAt).timestamp().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Users::UpdatedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(Users::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Users::UpdatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .col(ColumnDef::new(Users::LastLogin).timestamp())
                     .to_owned(),
             )
@@ -60,7 +85,11 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table((Alias::new("church"), Users::Table)).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), Users::Table))
+                    .to_owned(),
+            )
             .await
     }
 }

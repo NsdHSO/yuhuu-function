@@ -1,6 +1,6 @@
+use crate::strapi_client::StrapiClient;
 use async_graphql::*;
 use serde_json::Value;
-use crate::strapi_client::StrapiClient;
 
 pub struct QueryRoot;
 
@@ -25,10 +25,12 @@ impl QueryRoot {
         query: String,
         #[graphql(default)] variables: Option<Value>,
     ) -> Result<Value> {
-        let strapi_client = ctx.data::<StrapiClient>()
+        let strapi_client = ctx
+            .data::<StrapiClient>()
             .map_err(|_| Error::new("Strapi client not found in context"))?;
 
-        strapi_client.execute_query(&query, variables)
+        strapi_client
+            .execute_query(&query, variables)
             .await
             .map_err(|e| Error::new(format!("Failed to execute query on Strapi: {}", e)))
     }

@@ -23,8 +23,18 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Roles::Description).text())
                     .col(ColumnDef::new(Roles::Level).integer().not_null().default(1))
                     .col(ColumnDef::new(Roles::Permissions).json())
-                    .col(ColumnDef::new(Roles::CreatedAt).timestamp().not_null().default(Expr::current_timestamp()))
-                    .col(ColumnDef::new(Roles::UpdatedAt).timestamp().not_null().default(Expr::current_timestamp()))
+                    .col(
+                        ColumnDef::new(Roles::CreatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
+                    .col(
+                        ColumnDef::new(Roles::UpdatedAt)
+                            .timestamp()
+                            .not_null()
+                            .default(Expr::current_timestamp()),
+                    )
                     .to_owned(),
             )
             .await
@@ -32,7 +42,11 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table((Alias::new("church"), Roles::Table)).to_owned())
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), Roles::Table))
+                    .to_owned(),
+            )
             .await
     }
 }

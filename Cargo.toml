@@ -14,7 +14,7 @@ members = [
 
 [workspace.dependencies]
 anyhow = "1.0"
-thiserror = "1.0"
+thiserror = "2.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 actix-rt = "2.10.0"
@@ -41,7 +41,7 @@ rust_decimal = "1.37.2"
 jsonwebtoken = { version = "10.0.0", features = ["rust_crypto"] }
 base64 = "0.22.1"
 doppler-rs = "0.0.2"
-reqwest = { version = "0.12", features = ["rustls-tls", "json"] }
+reqwest = { version = "0.13", features = ["rustls-tls", "json"] }
 async-graphql = "7.0"
 async-graphql-actix-web = "7.0"
 graphql_client = "0.14"

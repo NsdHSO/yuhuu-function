@@ -40,3 +40,4 @@ impl Related<super::cell_group::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+

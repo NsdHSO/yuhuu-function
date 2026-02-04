@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
                 "CREATE TABLE IF NOT EXISTS church.seaorm_migration (
                     version VARCHAR NOT NULL PRIMARY KEY,
                     applied_at BIGINT NOT NULL
-                )"
+                )",
             )
             .await?;
 

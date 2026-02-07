@@ -1,11 +1,13 @@
 use actix_cors::Cors;
 use actix_web::http::header;
 use actix_web::{middleware::Logger, web, App, HttpServer};
+use auth_integration::{AuthClient, UserService};
 use chrono::Local;
 use config_env::ConfigService;
 use database::config::init;
 use dotenvy::dotenv;
 use env_logger::{Builder, Env};
+use functions::handlers::{configure_health, configure_profiles, configure_users};
 use graphql::{
     build_schema, graphql_handler, graphql_playground, strapi_proxy_handler, StrapiClient,
 };
@@ -43,6 +45,12 @@ async fn main() -> std::io::Result<()> {
     // Build GraphQL schema
     let schema = build_schema(strapi_client.clone());
 
+    // Initialize Auth Client for integration with auth server
+    let auth_client = AuthClient::new(cfg.auth_base_url.clone(), cfg.auth_api_key.clone());
+
+    // Initialize User Service (combines auth server + church database)
+    let user_service = UserService::new(conn.clone(), auth_client.clone());
+
     let server = HttpServer::new(move || {
         let cors = Cors::default()
             .allowed_origin_fn(|origin, _req| {
@@ -68,8 +76,15 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(data_base_conn.clone()))
             .app_data(web::Data::new(schema.clone()))
             .app_data(web::Data::new(strapi_client.clone()))
+            .app_data(web::Data::new(auth_client.clone()))
+            .app_data(web::Data::new(user_service.clone()))
             .wrap(Logger::default())
-            .service(web::scope("/v1").service(web::scope("")))
+            .configure(configure_health)
+            .service(
+                web::scope("/v1")
+                    .configure(configure_users)
+                    .configure(configure_profiles)
+            )
             .service(
                 web::resource("/graphql")
                     .route(web::post().to(graphql_handler))

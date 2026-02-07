@@ -26,3 +26,4 @@ http-response = { path = "../crates/http-response" }
 database = { path = "../crates/database" }
 config-env = { path = "../crates/config-env" }
 graphql = { path = "../crates/graphql" }
+auth-integration = { path = "../crates/auth-integration" }

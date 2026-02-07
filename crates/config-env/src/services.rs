@@ -6,6 +6,7 @@ pub struct ConfigService {
     pub access_token_public_key: String,
     pub app_env: String,
     pub auth_base_url: String,
+    pub auth_api_key: Option<String>,
     pub database_public_url: String,
     pub database_url: String,
     pub doppler_env: String,
@@ -36,6 +37,7 @@ impl ConfigService {
             access_token_public_key: Self::get_value(&secrets, "ACCESS_TOKEN_PUBLIC_KEY", ""),
             app_env: Self::get_value(&secrets, "APP_ENV", "dev"),
             auth_base_url: Self::get_value(&secrets, "AUTH_BASE_URL", "http://localhost:8081"),
+            auth_api_key: Self::get_optional_value(&secrets, "AUTH_API_KEY"),
             database_public_url: Self::get_value(&secrets, "DATABASE_PUBLIC_URL", ""),
             database_url: Self::get_value_required(&secrets, "DATABASE_URL"),
             doppler_env: Self::get_value(&secrets, "DOPPLER_ENV", ""),
@@ -102,6 +104,7 @@ impl ConfigService {
             "ACCESS_TOKEN_PUBLIC_KEY",
             "APP_ENV",
             "AUTH_BASE_URL",
+            "AUTH_API_KEY",
             "DATABASE_PUBLIC_URL",
             "DATABASE_URL",
             "DOPPLER_ENV",
@@ -168,5 +171,12 @@ impl ConfigService {
             .and_then(|s| s.get(key).cloned())
             .or_else(|| std::env::var(key).ok())
             .unwrap_or_else(|| panic!("{} must be set", key))
+    }
+
+    fn get_optional_value(secrets: &Option<HashMap<String, String>>, key: &str) -> Option<String> {
+        secrets
+            .as_ref()
+            .and_then(|s| s.get(key).cloned())
+            .or_else(|| std::env::var(key).ok())
     }
 }

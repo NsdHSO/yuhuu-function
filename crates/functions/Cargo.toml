@@ -8,3 +8,10 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
+actix-web = { workspace = true }
+sea-orm = { workspace = true }
+anyhow = { workspace = true }
+
+# Local crates
+models = { path = "../models" }
+auth-integration = { path = "../auth-integration" }

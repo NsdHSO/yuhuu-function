@@ -9,6 +9,7 @@ members = [
     "crates/database",
     "crates/config-env",
     "crates/graphql",
+    "crates/auth-integration",
     "migration",
 ]
 

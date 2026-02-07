@@ -7,7 +7,7 @@ use config_env::ConfigService;
 use database::config::init;
 use dotenvy::dotenv;
 use env_logger::{Builder, Env};
-use functions::handlers::{configure_health, configure_profiles, configure_users};
+use functions::{configure_health, configure_profiles, configure_users};
 use graphql::{
     build_schema, graphql_handler, graphql_playground, strapi_proxy_handler, StrapiClient,
 };

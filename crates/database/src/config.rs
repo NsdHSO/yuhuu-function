@@ -27,6 +27,7 @@ pub async fn init(db_url: String, logging: bool) -> Result<DatabaseConnection, C
 
     let mut opt = ConnectOptions::new(db_url);
     opt.sqlx_logging(logging);
+
     let connection_result = Database::connect(opt).await;
 
     // Cancel the progress display

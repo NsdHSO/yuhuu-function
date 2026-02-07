@@ -1,7 +1,7 @@
 use actix_cors::Cors;
 use actix_web::http::header;
 use actix_web::{middleware::Logger, web, App, HttpServer};
-use auth_integration::{AuthClient, AuthMiddleware, UserService};
+use auth_integration::JwtAuth;
 use chrono::Local;
 use config_env::ConfigService;
 use database::config::init;
@@ -45,11 +45,8 @@ async fn main() -> std::io::Result<()> {
     // Build GraphQL schema
     let schema = build_schema(strapi_client.clone());
 
-    // Initialize Auth Client for integration with auth server
-    let auth_client = AuthClient::new(cfg.auth_base_url.clone(), cfg.auth_api_key.clone());
-
-    // Initialize User Service (combines auth server + church database)
-    let user_service = UserService::new(conn.clone(), auth_client.clone());
+    // Initialize JWT Auth middleware
+    let jwt_auth = JwtAuth::new(cfg.auth_base_url.clone());
 
     let server = HttpServer::new(move || {
         let cors = Cors::default()
@@ -76,18 +73,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(data_base_conn.clone()))
             .app_data(web::Data::new(schema.clone()))
             .app_data(web::Data::new(strapi_client.clone()))
-            .app_data(web::Data::new(auth_client.clone()))
-            .app_data(web::Data::new(user_service.clone()))
             .wrap(Logger::default())
-            // Add Auth Middleware to validate JWT tokens
-            .wrap(
-                AuthMiddleware::new(auth_client.clone())
-                    .with_public_paths(vec![
-                        "/health".to_string(),
-                        "/graphql".to_string(),
-                        "/strapi-proxy".to_string(),
-                    ])
-            )
+            .wrap(jwt_auth.clone())
             .configure(configure_health)
             .service(
                 web::scope("/v1")

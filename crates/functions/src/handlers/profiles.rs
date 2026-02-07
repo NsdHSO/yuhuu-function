@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse, Result};
-use auth_integration::UserContext;
+use auth_integration::Subject;
 use chrono::NaiveDate;
 use models::internal::{CreateProfileRequest, ProfileResponse, UpdateProfileRequest};
 use models::dto::{user_profile, UserProfile};
@@ -12,7 +12,7 @@ pub async fn create_profile(
     db: web::Data<DatabaseConnection>,
     user_id: web::Path<i64>,
     body: web::Json<CreateProfileRequest>,
-    _user: UserContext,
+    _user: Subject,
 ) -> Result<HttpResponse> {
     // Check if profile already exists
     let existing = UserProfile::find()
@@ -78,7 +78,7 @@ pub async fn update_profile(
     db: web::Data<DatabaseConnection>,
     user_id: web::Path<i64>,
     body: web::Json<UpdateProfileRequest>,
-    _user: UserContext,
+    _user: Subject,
 ) -> Result<HttpResponse> {
     // Find existing profile
     let profile = UserProfile::find()
@@ -175,7 +175,7 @@ pub async fn update_profile(
 pub async fn get_profile(
     db: web::Data<DatabaseConnection>,
     user_id: web::Path<i64>,
-    _user: UserContext,
+    _user: Subject,
 ) -> Result<HttpResponse> {
     match UserProfile::find()
         .filter(user_profile::Column::UserId.eq(*user_id))

@@ -55,8 +55,8 @@ impl MigrationTrait for Migration {
                             .default(false),
                     )
                     .col(ColumnDef::new(UserMemberships::HolySpiritBaptismDate).date())
-                    .col(ColumnDef::new(UserMemberships::SpiritualGifts).json())
-                    .col(ColumnDef::new(UserMemberships::MinistryInterests).json())
+                    .col(ColumnDef::new(UserMemberships::SpiritualGifts).text())
+                    .col(ColumnDef::new(UserMemberships::MinistryInterests).text())
                     .col(ColumnDef::new(UserMemberships::SalvationTestimony).text())
                     .col(ColumnDef::new(UserMemberships::PreviousChurchName).string())
                     .col(ColumnDef::new(UserMemberships::PreviousChurchLocation).string())

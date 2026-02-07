@@ -28,7 +28,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(CellGroups::Description).text())
                     .col(ColumnDef::new(CellGroups::ZoneId).big_integer().not_null())
                     .col(ColumnDef::new(CellGroups::LeaderId).big_integer())
-                    .col(ColumnDef::new(CellGroups::AssistantLeaderIds).json())
+                    .col(ColumnDef::new(CellGroups::AssistantLeaderIds).text())
                     .col(ColumnDef::new(CellGroups::MeetingDay).string())
                     .col(ColumnDef::new(CellGroups::MeetingTime).time())
                     .col(ColumnDef::new(CellGroups::MeetingLocation).string())

@@ -22,7 +22,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Roles::Name).string().not_null().unique_key())
                     .col(ColumnDef::new(Roles::Description).text())
                     .col(ColumnDef::new(Roles::Level).integer().not_null().default(1))
-                    .col(ColumnDef::new(Roles::Permissions).json())
+                    .col(ColumnDef::new(Roles::Permissions).text())
                     .col(
                         ColumnDef::new(Roles::CreatedAt)
                             .timestamp()

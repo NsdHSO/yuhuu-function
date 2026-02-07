@@ -18,29 +18,12 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Users::Uuid).uuid().not_null().unique_key())
-                    .col(ColumnDef::new(Users::FirstName).string().not_null())
-                    .col(ColumnDef::new(Users::LastName).string().not_null())
                     .col(
-                        ColumnDef::new(Users::Email)
+                        ColumnDef::new(Users::AuthUserId)
                             .string()
                             .not_null()
                             .unique_key(),
                     )
-                    .col(ColumnDef::new(Users::PasswordHash).string().not_null())
-                    .col(
-                        ColumnDef::new(Users::IsActive)
-                            .boolean()
-                            .not_null()
-                            .default(true),
-                    )
-                    .col(
-                        ColumnDef::new(Users::IsEmailVerified)
-                            .boolean()
-                            .not_null()
-                            .default(false),
-                    )
-                    .col(ColumnDef::new(Users::EmailVerifiedAt).timestamp())
                     .col(
                         ColumnDef::new(Users::CreatedAt)
                             .timestamp()
@@ -53,29 +36,17 @@ impl MigrationTrait for Migration {
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
-                    .col(ColumnDef::new(Users::LastLogin).timestamp())
                     .to_owned(),
             )
             .await?;
 
-        // Create index on email for faster lookups
+        // Create index on auth_user_id for faster lookups
         manager
             .create_index(
                 Index::create()
-                    .name("idx_users_email")
+                    .name("idx_users_auth_user_id")
                     .table((Alias::new("church"), Users::Table))
-                    .col(Users::Email)
-                    .to_owned(),
-            )
-            .await?;
-
-        // Create index on uuid for external API lookups
-        manager
-            .create_index(
-                Index::create()
-                    .name("idx_users_uuid")
-                    .table((Alias::new("church"), Users::Table))
-                    .col(Users::Uuid)
+                    .col(Users::AuthUserId)
                     .to_owned(),
             )
             .await?;
@@ -98,15 +69,7 @@ impl MigrationTrait for Migration {
 enum Users {
     Table,
     Id,
-    Uuid,
-    FirstName,
-    LastName,
-    Email,
-    PasswordHash,
-    IsActive,
-    IsEmailVerified,
-    EmailVerifiedAt,
+    AuthUserId,
     CreatedAt,
     UpdatedAt,
-    LastLogin,
 }

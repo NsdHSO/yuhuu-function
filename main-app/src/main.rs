@@ -1,7 +1,7 @@
 use actix_cors::Cors;
 use actix_web::http::header;
 use actix_web::{middleware::Logger, web, App, HttpServer};
-use auth_integration::{AuthClient, UserService};
+use auth_integration::{AuthClient, AuthMiddleware, UserService};
 use chrono::Local;
 use config_env::ConfigService;
 use database::config::init;
@@ -79,6 +79,15 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(auth_client.clone()))
             .app_data(web::Data::new(user_service.clone()))
             .wrap(Logger::default())
+            // Add Auth Middleware to validate JWT tokens
+            .wrap(
+                AuthMiddleware::new(auth_client.clone())
+                    .with_public_paths(vec![
+                        "/health".to_string(),
+                        "/graphql".to_string(),
+                        "/strapi-proxy".to_string(),
+                    ])
+            )
             .configure(configure_health)
             .service(
                 web::scope("/v1")

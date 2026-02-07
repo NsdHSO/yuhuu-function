@@ -8,9 +8,6 @@ pub struct Model {
     pub id: i64,
 
     #[sea_orm(unique)]
-    pub uuid: Uuid,
-
-    #[sea_orm(unique)]
     pub name: String, // Pastor, Elder, Deacon, Cell Leader, Member, Admin, etc.
     pub description: Option<String>,
     pub level: i32, // Hierarchy level: 1=Member, 2=Cell Leader, 3=Zone Leader, 4=Pastor, 5=Admin

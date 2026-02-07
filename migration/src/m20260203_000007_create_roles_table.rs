@@ -18,7 +18,6 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Roles::Uuid).uuid().not_null().unique_key())
                     .col(ColumnDef::new(Roles::Name).string().not_null().unique_key())
                     .col(ColumnDef::new(Roles::Description).text())
                     .col(ColumnDef::new(Roles::Level).integer().not_null().default(1))
@@ -37,7 +36,31 @@ impl MigrationTrait for Migration {
                     )
                     .to_owned(),
             )
-            .await
+            .await?;
+
+        // Create index on name for faster lookups
+        manager
+            .create_index(
+                Index::create()
+                    .name("idx_roles_name")
+                    .table((Alias::new("church"), Roles::Table))
+                    .col(Roles::Name)
+                    .to_owned(),
+            )
+            .await?;
+
+        // Create index on level for hierarchy queries
+        manager
+            .create_index(
+                Index::create()
+                    .name("idx_roles_level")
+                    .table((Alias::new("church"), Roles::Table))
+                    .col(Roles::Level)
+                    .to_owned(),
+            )
+            .await?;
+
+        Ok(())
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
@@ -55,7 +78,6 @@ impl MigrationTrait for Migration {
 enum Roles {
     Table,
     Id,
-    Uuid,
     Name,
     Description,
     Level,

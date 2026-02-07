@@ -5,15 +5,16 @@
 ### Route Handlers Created
 
 #### 1. **Users API** (`crates/functions/src/handlers/users.rs`)
-- ✅ `POST /v1/users/link` - Link auth server user to church system
-- ✅ `GET /v1/users/:id` - Get complete user (auth + church data)
+- ✅ `POST /v1/users/link` - Link auth server user to church system (via JWT sub)
+- ✅ `GET /v1/users/:id` - Get church user by ID
 - ✅ `GET /v1/users` - List all users (paginated)
 
 **Features:**
-- Links auth server users via email
-- Fetches complete user combining auth server + church data
+- Links auth server users automatically from JWT token
+- Creates church user record with auth_user_id (sub from JWT)
+- Prevents duplicate linking (returns existing user if already linked)
 - Pagination support (page, limit)
-- Returns unified user response with email, name, role
+- Returns user with auth_user_id and timestamps
 
 #### 2. **Profiles API** (`crates/functions/src/handlers/profiles.rs`)
 - ✅ `POST /v1/users/:id/profile` - Create user profile
@@ -99,16 +100,24 @@ main-app/src/
 POST /v1/users/link
 Authorization: Bearer <token>
 
-{
-  "email": "user@example.com"
-}
+# No request body needed - uses JWT sub automatically
 
-# Response
+# Response (201 Created - new user)
 {
   "id": 1,
-  "auth_user_id": "uuid-from-auth",
-  "created_at": "2026-02-06T12:00:00",
+  "auth_user_id": "auth-server-user-uuid",
+  "created_at": "2026-02-07T12:00:00",
+  "updated_at": "2026-02-07T12:00:00",
   "message": "User linked successfully"
+}
+
+# Response (200 OK - existing user)
+{
+  "id": 1,
+  "auth_user_id": "auth-server-user-uuid",
+  "created_at": "2026-02-07T12:00:00",
+  "updated_at": "2026-02-07T12:00:00",
+  "message": "User already linked"
 }
 ```
 
@@ -117,16 +126,17 @@ Authorization: Bearer <token>
 GET /v1/users/1
 Authorization: Bearer <token>
 
-# Response
+# Response (200 OK)
 {
   "id": 1,
-  "auth_user_id": "uuid-123",
-  "email": "john@example.com",
-  "full_name": "John Doe",
-  "role": "Member",
-  "is_email_verified": true,
-  "created_at": "2026-02-06T12:00:00",
-  "updated_at": "2026-02-06T12:00:00"
+  "auth_user_id": "auth-server-user-uuid",
+  "created_at": "2026-02-07T12:00:00",
+  "updated_at": "2026-02-07T12:00:00"
+}
+
+# Response (404 Not Found)
+{
+  "error": "User not found"
 }
 ```
 

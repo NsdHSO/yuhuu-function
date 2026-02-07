@@ -12,17 +12,6 @@ impl MigrationTrait for Migration {
             .execute_unprepared("CREATE SCHEMA IF NOT EXISTS church")
             .await?;
 
-        // Create migration tracking table in church schema
-        manager
-            .get_connection()
-            .execute_unprepared(
-                "CREATE TABLE IF NOT EXISTS church.seaorm_migration (
-                    version VARCHAR NOT NULL PRIMARY KEY,
-                    applied_at BIGINT NOT NULL
-                )",
-            )
-            .await?;
-
         Ok(())
     }
 

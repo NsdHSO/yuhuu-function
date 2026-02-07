@@ -35,9 +35,4 @@ impl MigratorTrait for Migrator {
             Box::new(m20260203_000013_create_givings_table::Migration),
         ]
     }
-
-    // Use church schema for migration tracking table
-    fn migration_table_name() -> DynIden {
-        Alias::new("church.seaorm_migration").into_iden()
-    }
 }

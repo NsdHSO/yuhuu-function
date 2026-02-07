@@ -18,7 +18,7 @@ fi
 
 # Ask for schema (e.g., auth or public), default to 'auth'
 read -r -p "Database schema to use [auth] (e.g., auth or public): " DB_SCHEMA
-DB_SCHEMA="${DB_SCHEMA:-auth}"
+DB_SCHEMA="church"
 
 echo "Running database migrations against schema: ${DB_SCHEMA} ..."
 # Execute without printing the URL to avoid exposing credentials

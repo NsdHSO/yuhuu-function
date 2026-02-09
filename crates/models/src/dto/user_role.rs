@@ -7,9 +7,6 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = true)]
     pub id: i64,
 
-    #[sea_orm(unique)]
-    pub uuid: Uuid,
-
     pub user_id: i64,
     pub role_id: i64,
     pub assigned_date: Date,

@@ -2,7 +2,6 @@ use actix_web::web;
 
 use super::handlers;
 
-/// Configure profile routes
 pub fn configure_profiles(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::resource("/users/{id}/profile")

@@ -18,12 +18,6 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(
-                        ColumnDef::new(UserRoles::Uuid)
-                            .uuid()
-                            .not_null()
-                            .unique_key(),
-                    )
                     .col(ColumnDef::new(UserRoles::UserId).big_integer().not_null())
                     .col(ColumnDef::new(UserRoles::RoleId).big_integer().not_null())
                     .col(ColumnDef::new(UserRoles::AssignedDate).date().not_null())
@@ -117,7 +111,6 @@ impl MigrationTrait for Migration {
 enum UserRoles {
     Table,
     Id,
-    Uuid,
     UserId,
     RoleId,
     AssignedDate,

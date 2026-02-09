@@ -7,6 +7,9 @@ use sea_orm::{
 };
 use serde_json::json;
 
+use crate::features::roles::service::RoleService;
+use crate::features::user_roles::service::UserRoleService;
+
 pub struct UserService;
 
 impl UserService {
@@ -45,12 +48,21 @@ impl UserService {
 
                 let user = new_user.insert(db).await?;
 
+                // Automatically assign "Member" role to new users via RoleService and UserRoleService
+                let member_role_result = RoleService::get_role_by_name(db, "Member").await;
+
+                if let Ok(member_role) = member_role_result {
+                    // Assign role through UserRoleService (no assigned_by since it's system-assigned)
+                    let _ = UserRoleService::assign_role(db, user.id, member_role.id, user.id).await;
+                    // Ignore error if role assignment fails - user is still created
+                }
+
                 Ok(LinkUserResponse {
                     id: user.id,
                     auth_user_id: user.auth_user_id,
                     created_at: user.created_at,
                     updated_at: user.updated_at,
-                    message: "User linked successfully".to_string(),
+                    message: "User linked successfully with Member role".to_string(),
                 })
             }
         }

@@ -3,6 +3,7 @@ use http_response::{CustomError, HttpCodeW};
 use models::dto::{user_profile, UserProfile};
 use models::internal::{CreateProfileRequest, ProfileResponse, UpdateProfileRequest};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use user_profile::Column::UserId;
 
 pub struct ProfileService;
 
@@ -15,7 +16,7 @@ impl ProfileService {
     ) -> Result<ProfileResponse, CustomError> {
         // Check if profile already exists
         let existing = UserProfile::find()
-            .filter(user_profile::Column::UserId.eq(user_id))
+            .filter(UserId.eq(user_id))
             .one(db)
             .await?;
 
@@ -64,7 +65,7 @@ impl ProfileService {
     ) -> Result<ProfileResponse, CustomError> {
         // Find existing profile
         let existing_profile = UserProfile::find()
-            .filter(user_profile::Column::UserId.eq(user_id))
+            .filter(UserId.eq(user_id))
             .one(db)
             .await?
             .ok_or_else(|| {
@@ -131,7 +132,7 @@ impl ProfileService {
         user_id: i64,
     ) -> Result<ProfileResponse, CustomError> {
         let profile = UserProfile::find()
-            .filter(user_profile::Column::UserId.eq(user_id))
+            .filter(UserId.eq(user_id))
             .one(db)
             .await?
             .ok_or_else(|| {

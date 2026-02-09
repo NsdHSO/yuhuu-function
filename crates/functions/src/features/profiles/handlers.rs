@@ -1,8 +1,7 @@
+use super::service::ProfileService;
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
 use models::internal::{CreateProfileRequest, UpdateProfileRequest};
-
-use super::service::ProfileService;
 
 /// POST /v1/users/:id/profile
 /// Create user profile
@@ -37,6 +36,7 @@ pub async fn get_profile(
     user_id: web::Path<i64>,
     _user: Subject,
 ) -> Result<HttpResponse> {
+    println!("{:?}", user_id);
     let profile = ProfileService::get_profile(&db, *user_id).await?;
 
     Ok(HttpResponse::Ok().json(profile))

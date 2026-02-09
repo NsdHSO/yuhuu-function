@@ -98,7 +98,9 @@ where
             let url = format!("{}/v1/auth/introspect", auth_base_url.trim_end_matches('/'));
             let resp = client
                 .post(&url)
-                .json(&IntrospectRequest { token: token.clone() })
+                .json(&IntrospectRequest {
+                    token: token.clone(),
+                })
                 .send()
                 .await
                 .map_err(|e| {

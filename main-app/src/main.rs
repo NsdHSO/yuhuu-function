@@ -79,7 +79,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::scope("/v1")
                     .configure(configure_users)
-                    .configure(configure_profiles)
+                    .configure(configure_profiles),
             )
             .service(
                 web::resource("/graphql")

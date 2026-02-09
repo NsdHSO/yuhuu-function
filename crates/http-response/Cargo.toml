@@ -6,5 +6,5 @@ edition = "2021"
 [dependencies]
 actix-web = { workspace = true }
 serde = { workspace = true }
-sea-orm = {workspace = true}
-futures-util = {workspace = true}
+sea-orm = { workspace = true }
+futures-util = { workspace = true }

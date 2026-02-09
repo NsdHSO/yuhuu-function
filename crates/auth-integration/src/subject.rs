@@ -22,7 +22,9 @@ impl FromRequest for Subject {
         // There may be multiple String types in extensions; try to also find token_uuid by key type
         // Since we cannot distinguish, return Unauthorized if typed Subject is missing
         match sub {
-            Some(_) => ready(Err(actix_web::error::ErrorUnauthorized("subject missing token uuid"))),
+            Some(_) => ready(Err(actix_web::error::ErrorUnauthorized(
+                "subject missing token uuid",
+            ))),
             None => ready(Err(actix_web::error::ErrorUnauthorized("unauthenticated"))),
         }
     }

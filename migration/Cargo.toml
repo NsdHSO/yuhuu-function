@@ -19,6 +19,6 @@ uuid = { workspace = true }
 [dependencies.sea-orm-migration]
 version = "1.1.11"
 features = [
-  "sqlx-postgres",
-  "runtime-tokio-native-tls",
+    "sqlx-postgres",
+    "runtime-tokio-native-tls",
 ]

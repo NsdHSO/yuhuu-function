@@ -1,6 +1,7 @@
 # Config Environment Service
 
-This crate provides a `ConfigService` that fetches environment variables from Doppler using `doppler-rs` and falls back to local environment variables.
+This crate provides a `ConfigService` that fetches environment variables from Doppler using `doppler-rs` and falls back
+to local environment variables.
 
 ## Features
 
@@ -41,11 +42,13 @@ The service manages the following configuration:
 ### Setup with Doppler
 
 1. Set your Doppler service token:
+
 ```bash
 export DOPPLER_TOKEN=dp.st.your-service-token-here
 ```
 
 2. Optionally set project and config (if not using service token defaults):
+
 ```bash
 export DOPPLER_PROJECT=your-project
 export DOPPLER_CONFIG=dev
@@ -69,8 +72,10 @@ async fn main() {
 
 ## How It Works
 
-1. **Doppler First**: If `DOPPLER_TOKEN` is set, the service uses `doppler-rs` to fetch all secrets from Doppler via the `secrets_download` API endpoint
-2. **Local Fallback**: If Doppler is unavailable or `DOPPLER_TOKEN` is not set, it falls back to reading from local environment variables
+1. **Doppler First**: If `DOPPLER_TOKEN` is set, the service uses `doppler-rs` to fetch all secrets from Doppler via the
+   `secrets_download` API endpoint
+2. **Local Fallback**: If Doppler is unavailable or `DOPPLER_TOKEN` is not set, it falls back to reading from local
+   environment variables
 3. **Defaults**: Sensible defaults are provided for non-critical configuration values
 
 ## Authentication

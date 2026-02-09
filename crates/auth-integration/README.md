@@ -4,7 +4,8 @@ Authentication integration with external auth server for the Church Management S
 
 ## Overview
 
-This crate provides everything needed to integrate with the external auth server (https://github.com/NsdHSO/auth). It handles:
+This crate provides everything needed to integrate with the external auth server (https://github.com/NsdHSO/auth). It
+handles:
 
 - JWT token verification
 - User authentication middleware
@@ -47,12 +48,14 @@ This crate provides everything needed to integrate with the external auth server
 HTTP client for communicating with the auth server.
 
 **Methods:**
+
 - `get_user(user_id)` - Fetch user by ID
 - `get_user_by_email(email)` - Fetch user by email
 - `verify_token(token)` - Verify JWT token
 - `user_exists(user_id)` - Check if user exists
 
 **Example:**
+
 ```rust
 use auth_integration::AuthClient;
 
@@ -70,12 +73,14 @@ println!("User: {} {}", user.first_name, user.last_name);
 Actix-web middleware that validates JWT tokens on incoming requests.
 
 **Features:**
+
 - Extracts `Authorization: Bearer <token>` header
 - Verifies token with auth server
 - Attaches `UserContext` to request extensions
 - Supports public paths (no auth required)
 
 **Example:**
+
 ```rust
 use auth_integration::AuthMiddleware;
 use actix_web::{App, HttpServer};
@@ -101,12 +106,14 @@ HttpServer::new(move || {
 User information attached to authenticated requests.
 
 **Fields:**
+
 - `auth_user_id: String` - User ID from auth server
 - `email: Option<String>` - User email
 - `role: String` - User role (admin, user, etc.)
 - `token: String` - JWT token
 
 **Example:**
+
 ```rust
 use auth_integration::UserContext;
 use actix_web::{get, HttpResponse, Responder};
@@ -127,6 +134,7 @@ async fn get_profile(user: UserContext) -> impl Responder {
 Service layer combining auth server data with local church data.
 
 **Methods:**
+
 - `get_complete_user(church_user_id)` - Get full user (auth + church data)
 - `find_by_auth_id(auth_user_id)` - Find church user by auth ID
 - `find_by_email(email)` - Find user by email
@@ -134,6 +142,7 @@ Service layer combining auth server data with local church data.
 - `link_auth_user_by_email(email)` - Link by email
 
 **Example:**
+
 ```rust
 use auth_integration::UserService;
 
@@ -141,13 +150,13 @@ let user_service = UserService::new(db.clone(), auth_client.clone());
 
 // Link an auth user to church system
 let church_user = user_service
-    .link_auth_user_by_email("john@example.com")
-    .await?;
+.link_auth_user_by_email("john@example.com")
+.await?;
 
 // Get complete user data
 let complete_user = user_service
-    .get_complete_user(church_user.id)
-    .await?;
+.get_complete_user(church_user.id)
+.await?;
 
 println!("Name: {}", complete_user.full_name());
 println!("Email: {}", complete_user.email());
@@ -159,6 +168,7 @@ println!("Role: {}", complete_user.role());
 ### 1. Add to Workspace
 
 Update root `Cargo.toml`:
+
 ```toml
 [workspace]
 members = [
@@ -170,6 +180,7 @@ members = [
 ### 2. Add Dependency
 
 In your application's `Cargo.toml`:
+
 ```toml
 [dependencies]
 auth-integration = { path = "../crates/auth-integration" }
@@ -178,6 +189,7 @@ auth-integration = { path = "../crates/auth-integration" }
 ### 3. Configure Environment
 
 Add to `.env`:
+
 ```bash
 AUTH_SERVER_URL=https://auth.example.com
 AUTH_SERVER_API_KEY=your-api-key
@@ -213,9 +225,9 @@ async fn main() -> std::io::Result<()> {
                     .service(protected_routes)
             )
     })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
 }
 ```
 
@@ -262,6 +274,7 @@ async fn main() -> std::io::Result<()> {
 ### Token Verification Failures
 
 Returns `401 Unauthorized` with JSON body:
+
 ```json
 {
   "error": "Token verification failed: <reason>"
@@ -271,6 +284,7 @@ Returns `401 Unauthorized` with JSON body:
 ### Missing Authorization Header
 
 Returns `401 Unauthorized` with JSON body:
+
 ```json
 {
   "error": "Missing or invalid Authorization header"
@@ -280,6 +294,7 @@ Returns `401 Unauthorized` with JSON body:
 ### User Not Found
 
 The service returns `anyhow::Error` which you should handle in your handlers:
+
 ```rust
 use actix_web::{get, HttpResponse, Responder};
 
@@ -373,7 +388,8 @@ ALTER TABLE users
 
 ### Caching (Recommended)
 
-The current implementation makes a fresh API call to the auth server on every request. For better performance, consider adding caching:
+The current implementation makes a fresh API call to the auth server on every request. For better performance, consider
+adding caching:
 
 ```rust
 use redis::AsyncCommands;
@@ -433,6 +449,7 @@ async fn get_user_cached(
 ## Contributing
 
 When adding features:
+
 1. Update this README
 2. Add unit tests
 3. Update example code

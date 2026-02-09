@@ -1,18 +1,18 @@
 // Database models - SeaORM entities
 // These represent database tables
 
+pub mod attendance;
+pub mod cell_group;
+pub mod giving;
+pub mod ministry;
+pub mod role;
 pub mod user;
 pub mod user_address;
 pub mod user_membership;
+pub mod user_ministry;
 pub mod user_profile;
 pub mod user_role;
-pub mod user_ministry;
-pub mod cell_group;
 pub mod zone;
-pub mod role;
-pub mod ministry;
-pub mod attendance;
-pub mod giving;
 
 // Re-export for convenience
 pub use attendance::{

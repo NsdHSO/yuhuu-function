@@ -67,17 +67,15 @@ impl MigrationTrait for Migration {
         // Delete all default roles
         let delete = Query::delete()
             .from_table((Alias::new("church"), Roles::Table))
-            .and_where(
-                Expr::col(Roles::Name).is_in([
-                    "Member",
-                    "Cell Leader",
-                    "Zone Leader",
-                    "Deacon",
-                    "Elder",
-                    "Pastor",
-                    "Admin",
-                ])
-            )
+            .and_where(Expr::col(Roles::Name).is_in([
+                "Member",
+                "Cell Leader",
+                "Zone Leader",
+                "Deacon",
+                "Elder",
+                "Pastor",
+                "Admin",
+            ]))
             .to_owned();
 
         manager.exec_stmt(delete).await?;

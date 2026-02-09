@@ -5,27 +5,32 @@ This directory contains SeaORM migrations for the church management system.
 ## Running Migrations
 
 ### Apply all pending migrations
+
 ```bash
 cd migration
 cargo run -- up
 ```
 
 ### Rollback the last migration
+
 ```bash
 cargo run -- down
 ```
 
 ### Check migration status
+
 ```bash
 cargo run -- status
 ```
 
 ### Refresh (rollback all and reapply)
+
 ```bash
 cargo run -- refresh
 ```
 
 ### Reset (rollback all)
+
 ```bash
 cargo run -- reset
 ```
@@ -49,6 +54,7 @@ cargo run -- reset
 ## Database Structure
 
 All tables are created in the `church` schema:
+
 - church.users
 - church.user_profiles
 - church.user_addresses

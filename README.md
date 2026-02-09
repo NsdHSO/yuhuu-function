@@ -1,6 +1,7 @@
 # Yuhuu Function
 
-A Rust workspace project with Actix Web framework, organized into multiple crates for better modularity and code organization.
+A Rust workspace project with Actix Web framework, organized into multiple crates for better modularity and code
+organization.
 
 ## Project Structure
 
@@ -57,11 +58,13 @@ yuhuu-function/
 ### Configuration
 
 1. Copy the example environment file:
+
 ```bash
 cp .env.example .env
 ```
 
 2. Update the `.env` file with your configuration:
+
 ```env
 HOST=127.0.0.1
 PORT=8080
@@ -138,6 +141,7 @@ The project includes a GraphQL API with:
 - **Playground**: Interactive GraphQL IDE for development
 
 Example query:
+
 ```graphql
 query {
   health

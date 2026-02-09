@@ -1,7 +1,10 @@
 use http_response::{CustomError, HttpCodeW};
 use models::internal::{LinkUserResponse, UserResponse};
 use models::{User, UserActiveModel};
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter, Set};
+use sea_orm::{
+    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter,
+    Set,
+};
 use serde_json::json;
 
 pub struct UserService;
@@ -78,7 +81,11 @@ impl UserService {
         limit: i64,
     ) -> Result<serde_json::Value, CustomError> {
         let page = if page < 1 { 1 } else { page };
-        let limit = if limit < 1 || limit > 100 { 20 } else { limit };
+        let limit = if (1..=100).contains(&limit) {
+            20
+        } else {
+            limit
+        };
 
         let users = User::find()
             .paginate(db, limit as u64)

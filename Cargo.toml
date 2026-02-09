@@ -45,4 +45,4 @@ doppler-rs = "0.0.2"
 reqwest = { version = "^0", features = ["rustls-tls", "json"] }
 async-graphql = "7.0"
 async-graphql-actix-web = "7.0"
-graphql_client = "0.14"
+graphql_client = "0.16.0"

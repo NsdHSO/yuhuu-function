@@ -10,7 +10,7 @@ pub async fn assign_role(
     db: web::Data<sea_orm::DatabaseConnection>,
     path: web::Path<i64>,
     body: web::Json<AssignRoleRequest>,
-    subject: Subject,
+    _subject: Subject,
 ) -> Result<HttpResponse> {
     let user_id = path.into_inner();
 

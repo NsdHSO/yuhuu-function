@@ -80,10 +80,10 @@ async fn main() -> std::io::Result<()> {
             .configure(configure_health)
             .service(
                 web::scope("/v1")
-                    .configure(configure_profiles)   // Register profiles first (more specific: /users/{id}/profile)
+                    .configure(configure_profiles) // Register profiles first (more specific: /users/{id}/profile)
                     .configure(configure_user_roles) // User-role assignments (/users/{id}/roles, /roles/{id}/users)
-                    .configure(configure_users)      // Then users (less specific: /users/{id})
-                    .configure(configure_roles),     // Roles management
+                    .configure(configure_users) // Then users (less specific: /users/{id})
+                    .configure(configure_roles), // Roles management
             )
             .service(
                 web::resource("/graphql")

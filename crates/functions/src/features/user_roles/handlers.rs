@@ -1,6 +1,6 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
-use models::internal::{AssignRoleRequest, RemoveRoleRequest};
+use models::internal::AssignRoleRequest;
 
 use super::service::UserRoleService;
 

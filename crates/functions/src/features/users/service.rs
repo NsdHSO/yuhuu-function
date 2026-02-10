@@ -53,7 +53,8 @@ impl UserService {
 
                 if let Ok(member_role) = member_role_result {
                     // Assign role through UserRoleService (no assigned_by since it's system-assigned)
-                    let _ = UserRoleService::assign_role(db, user.id, member_role.id, user.id).await;
+                    let _ =
+                        UserRoleService::assign_role(db, user.id, member_role.id, user.id).await;
                     // Ignore error if role assignment fails - user is still created
                 }
 

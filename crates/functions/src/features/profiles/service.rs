@@ -4,10 +4,28 @@ use models::dto::{user_profile, UserProfile};
 use models::internal::{CreateProfileRequest, ProfileResponse, UpdateProfileRequest};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use user_profile::Column::UserId;
+use user_profile::Model;
 
 pub struct ProfileService;
 
 impl ProfileService {
+    /// Helper to find a profile by user_id or return NotFound error
+    async fn find_profile_by_user(
+        db: &DatabaseConnection,
+        user_id: i64,
+    ) -> Result<Model, CustomError> {
+        UserProfile::find()
+            .filter(UserId.eq(user_id))
+            .one(db)
+            .await?
+            .ok_or_else(|| {
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Profile not found for this user".to_string(),
+                )
+            })
+    }
+
     /// Create a new user profile
     pub async fn create_profile(
         db: &DatabaseConnection,
@@ -64,16 +82,7 @@ impl ProfileService {
         request: UpdateProfileRequest,
     ) -> Result<ProfileResponse, CustomError> {
         // Find existing profile
-        let existing_profile = UserProfile::find()
-            .filter(UserId.eq(user_id))
-            .one(db)
-            .await?
-            .ok_or_else(|| {
-                CustomError::new(
-                    HttpCodeW::NotFound,
-                    "Profile not found for this user".to_string(),
-                )
-            })?;
+        let existing_profile = Self::find_profile_by_user(db, user_id).await?;
 
         let mut active_profile: user_profile::ActiveModel = existing_profile.into();
 
@@ -131,16 +140,7 @@ impl ProfileService {
         db: &DatabaseConnection,
         user_id: i64,
     ) -> Result<ProfileResponse, CustomError> {
-        let profile = UserProfile::find()
-            .filter(UserId.eq(user_id))
-            .one(db)
-            .await?
-            .ok_or_else(|| {
-                CustomError::new(
-                    HttpCodeW::NotFound,
-                    "Profile not found for this user".to_string(),
-                )
-            })?;
+        let profile = Self::find_profile_by_user(db, user_id).await?;
 
         Ok(profile.into())
     }

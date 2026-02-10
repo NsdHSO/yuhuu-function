@@ -1,19 +1,17 @@
+use crate::features::roles::service::RoleService;
+use crate::features::users::service::UserService;
 use http_response::{CustomError, HttpCodeW};
 use models::dto::{user_role, UserRole};
 use models::internal::UserRoleResponse;
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set,
-};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use user_role::{ActiveModel, Column, Model};
 use Column::{IsActive, RoleId, UserId};
-use user_role::{ActiveModel, Column};
-use crate::features::roles::service::RoleService;
-use crate::features::users::service::UserService;
 
 pub struct UserRoleService;
 
 impl UserRoleService {
-    /// Helper to convert user_role model to response
-    fn to_response(user_role: models::dto::user_role::Model, role_name: String) -> UserRoleResponse {
+    /// Helper to build UserRoleResponse from user_role model and role name
+    fn build_response(user_role: Model, role_name: String) -> UserRoleResponse {
         UserRoleResponse {
             id: user_role.id,
             user_id: user_role.user_id,
@@ -70,17 +68,7 @@ impl UserRoleService {
 
         let user_role = new_user_role.insert(db).await?;
 
-        Ok(UserRoleResponse {
-            id: user_role.id,
-            user_id: user_role.user_id,
-            role_id: user_role.role_id,
-            role_name: role.name,
-            assigned_date: user_role.assigned_date,
-            assigned_by: user_role.assigned_by,
-            is_active: user_role.is_active,
-            created_at: user_role.created_at,
-            updated_at: user_role.updated_at,
-        })
+        Ok(Self::build_response(user_role, role.name))
     }
 
     /// Remove a role from a user (set is_active = false)
@@ -97,7 +85,10 @@ impl UserRoleService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "User does not have this role".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "User does not have this role".to_string(),
+                )
             })?;
 
         // Deactivate the role assignment
@@ -128,17 +119,7 @@ impl UserRoleService {
         let mut responses = Vec::new();
         for user_role in user_roles {
             if let Ok(role) = RoleService::get_role_by_id(db, user_role.role_id).await {
-                responses.push(UserRoleResponse {
-                    id: user_role.id,
-                    user_id: user_role.user_id,
-                    role_id: user_role.role_id,
-                    role_name: role.name,
-                    assigned_date: user_role.assigned_date,
-                    assigned_by: user_role.assigned_by,
-                    is_active: user_role.is_active,
-                    created_at: user_role.created_at,
-                    updated_at: user_role.updated_at,
-                });
+                responses.push(Self::build_response(user_role, role.name));
             }
         }
 
@@ -162,17 +143,7 @@ impl UserRoleService {
 
         let responses: Vec<UserRoleResponse> = user_roles
             .into_iter()
-            .map(|user_role| UserRoleResponse {
-                id: user_role.id,
-                user_id: user_role.user_id,
-                role_id: user_role.role_id,
-                role_name: role.name.clone(),
-                assigned_date: user_role.assigned_date,
-                assigned_by: user_role.assigned_by,
-                is_active: user_role.is_active,
-                created_at: user_role.created_at,
-                updated_at: user_role.updated_at,
-            })
+            .map(|user_role| Self::build_response(user_role, role.name.clone()))
             .collect();
 
         Ok(responses)

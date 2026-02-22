@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use actix_web::body::EitherBody;
 use actix_web::dev::{Service, ServiceRequest, ServiceResponse, Transform};
-use actix_web::{http::header::AUTHORIZATION, Error, HttpMessage, HttpResponse};
+use actix_web::{http::header::AUTHORIZATION, http::Method, Error, HttpMessage, HttpResponse};
 use futures_util::future::LocalBoxFuture;
 use http_response::{error_handler::CustomError, HttpCodeW};
 use reqwest::Client;
@@ -81,6 +81,11 @@ where
         let auth_base_url = self.auth_base_url.clone();
 
         Box::pin(async move {
+            // Let CORS middleware handle preflights. Do NOT require auth on OPTIONS.
+            if req.method() == Method::OPTIONS {
+                return svc.call(req).await.map(|res| res.map_into_left_body());
+            }
+
             let token = req
                 .headers()
                 .get(AUTHORIZATION)

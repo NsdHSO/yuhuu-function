@@ -62,40 +62,40 @@ impl From<DbErr> for CustomError {
     fn from(error: DbErr) -> CustomError {
         match error {
             DbErr::Conn(e) => {
-                let msg = format!("Auth database connection error: {e}");
+                let msg = format!("Chruch database connection error: {e}");
                 print!("{msg}"); // Log the error
                 CustomError::new(HttpCodeW::InternalServerError, msg)
             }
             DbErr::Exec(e) => {
-                let msg = format!("Auth database execution error: {e}");
+                let msg = format!("Chruch database execution error: {e}");
                 print!("{msg}"); // Log the error
                 CustomError::new(HttpCodeW::InternalServerError, msg)
             }
             DbErr::Query(e) => {
-                let msg = format!("Auth database query error: {e}");
+                let msg = format!("Chruch database query error: {e}");
                 print!("{msg}"); // Log the error
                 CustomError::new(HttpCodeW::InternalServerError, msg)
             }
             DbErr::Json(e) => {
-                let msg = format!("Auth JSON error: {e}");
+                let msg = format!("Chruch JSON error: {e}");
                 print!("{msg}"); // Log the error
                 CustomError::new(HttpCodeW::InternalServerError, msg)
             }
             DbErr::ConvertFromU64(e) => {
-                let msg = format!("Auth conversion error: {e}");
+                let msg = format!("Chruch conversion error: {e}");
                 print!("{msg}"); // Log the error
                 CustomError::new(HttpCodeW::InternalServerError, msg)
             }
             DbErr::RecordNotFound(_) => {
-                CustomError::new(HttpCodeW::NotFound, "Auth record not found".to_string())
+                CustomError::new(HttpCodeW::NotFound, "Chruch record not found".to_string())
             } // Not an error that needs logging at ERROR level
             DbErr::Custom(e) => {
-                let msg = format!("Custom auth database error: {e}");
+                let msg = format!("Custom Chruch database error: {e}");
                 print!("{msg}"); // Log the error
                 CustomError::new(HttpCodeW::InternalServerError, msg)
             }
             _ => {
-                let msg = format!("Unknown auth database error: {error:?}");
+                let msg = format!("Unknown Chruch database error: {error:?}");
                 print!("{msg}"); // Log the error
                 CustomError::new(HttpCodeW::InternalServerError, msg)
             }
@@ -107,13 +107,13 @@ impl ResponseError for CustomError {
     fn error_response(&self) -> HttpResponse {
         // Log the error when it's being converted to an HTTP response
         print!(
-            "Auth service responding with error: Status={:?}, Message={}",
+            "Chruch service responding with error: Status={:?}, Message={}",
             self.error_status_code, self.error_message
         );
 
         // Create a ResponseObject using the error message and mapped HttpCodeW
         let response_object = create_response(self.error_message.clone(), self.error_status_code);
-        println!("Auth ResponseObject: {response_object:?}");
+        println!("Chruch ResponseObject: {response_object:?}");
         // Build the HttpResponse based on the HttpCodeW
         let status_code = StatusCode::from_u16(self.error_status_code as u16)
             .unwrap_or(StatusCode::INTERNAL_SERVER_ERROR);

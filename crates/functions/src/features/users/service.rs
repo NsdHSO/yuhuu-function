@@ -87,6 +87,26 @@ impl UserService {
         })
     }
 
+    /// Get a user by auth_user_id (from JWT sub)
+    pub async fn get_user_by_auth_id(
+        db: &DatabaseConnection,
+        auth_user_id: &str,
+    ) -> Result<UserResponse, CustomError> {
+        use models::dto::user::Column;
+        let user = User::find()
+            .filter(Column::AuthUserId.eq(auth_user_id))
+            .one(db)
+            .await?
+            .ok_or_else(|| CustomError::new(HttpCodeW::NotFound, "User not linked in church system".to_string()))?;
+
+        Ok(UserResponse {
+            id: user.id,
+            auth_user_id: user.auth_user_id,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+        })
+    }
+
     /// List users with pagination
     pub async fn list_users(
         db: &DatabaseConnection,

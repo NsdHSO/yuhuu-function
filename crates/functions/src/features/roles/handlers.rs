@@ -1,6 +1,7 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
 use models::internal::{CreateRoleRequest, ListRolesQuery, UpdateRoleRequest};
+use http_response::{create_response, HttpCodeW};
 
 use super::service::RoleService;
 
@@ -13,7 +14,8 @@ pub async fn create_role(
 ) -> Result<HttpResponse> {
     let role = RoleService::create_role(&db, body.into_inner()).await?;
 
-    Ok(HttpResponse::Created().json(role))
+    let resp = create_response(role, HttpCodeW::Created);
+    Ok(HttpResponse::Created().json(resp))
 }
 
 /// GET /v1/roles/:id
@@ -26,7 +28,8 @@ pub async fn get_role(
     let role_id = path.into_inner();
     let role = RoleService::get_role_by_id(&db, role_id).await?;
 
-    Ok(HttpResponse::Ok().json(role))
+    let resp = create_response(role, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
 }
 
 /// GET /v1/roles
@@ -38,7 +41,8 @@ pub async fn list_roles(
 ) -> Result<HttpResponse> {
     let response = RoleService::list_roles(&db, query.page, query.limit).await?;
 
-    Ok(HttpResponse::Ok().json(response))
+    let resp = create_response(response, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
 }
 
 /// PUT /v1/roles/:id
@@ -52,7 +56,8 @@ pub async fn update_role(
     let role_id = path.into_inner();
     let role = RoleService::update_role(&db, role_id, body.into_inner()).await?;
 
-    Ok(HttpResponse::Ok().json(role))
+    let resp = create_response(role, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
 }
 
 /// DELETE /v1/roles/:id
@@ -65,5 +70,7 @@ pub async fn delete_role(
     let role_id = path.into_inner();
     RoleService::delete_role(&db, role_id).await?;
 
-    Ok(HttpResponse::NoContent().finish())
+    // Return a standardized JSON wrapper with a NoContent logical code
+    let resp = create_response("Role deleted", HttpCodeW::NoContent);
+    Ok(HttpResponse::Ok().json(resp))
 }

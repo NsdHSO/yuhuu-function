@@ -1,8 +1,20 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
 use models::internal::ListUsersQuery;
+use http_response::{create_response, HttpCodeW};
 
 use super::service::UserService;
+
+/// GET /v1/me
+/// Get the authenticated church user (derived from JWT)
+pub async fn get_me(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    subject: Subject,
+) -> Result<HttpResponse> {
+    let user = UserService::get_user_by_auth_id(&db, &subject.sub).await?;
+    let resp = create_response(user, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
 
 /// POST /v1/users/link
 /// Link the authenticated user from auth server to church system
@@ -13,9 +25,11 @@ pub async fn link_user(
     let response = UserService::link_user(&db, &subject.sub).await?;
 
     if response.message.contains("already") {
-        Ok(HttpResponse::Ok().json(response))
+        let resp = create_response(response, HttpCodeW::OK);
+        Ok(HttpResponse::Ok().json(resp))
     } else {
-        Ok(HttpResponse::Created().json(response))
+        let resp = create_response(response, HttpCodeW::Created);
+        Ok(HttpResponse::Created().json(resp))
     }
 }
 
@@ -29,7 +43,8 @@ pub async fn get_user(
     let user_id = path.into_inner();
     let user = UserService::get_user_by_id(&db, user_id).await?;
 
-    Ok(HttpResponse::Ok().json(user))
+    let resp = create_response(user, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
 }
 
 /// GET /v1/users
@@ -41,5 +56,6 @@ pub async fn list_users(
 ) -> Result<HttpResponse> {
     let response = UserService::list_users(&db, query.page, query.limit).await?;
 
-    Ok(HttpResponse::Ok().json(response))
+    let resp = create_response(response, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
 }

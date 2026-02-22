@@ -18,7 +18,7 @@ use graphql::{
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let cfg = ConfigService::new().await;
-    let conn: sea_orm::DatabaseConnection = init(cfg.database_url, cfg.sqlx_log)
+    let conn: sea_orm::DatabaseConnection = init(cfg.database_url.clone(), cfg.sqlx_log)
         .await
         .expect("Failed to initialize database connection");
     // Initialize connection here
@@ -71,10 +71,10 @@ async fn main() -> std::io::Result<()> {
             .supports_credentials();
 
         App::new()
-            .wrap(cors)
             .app_data(web::Data::new(data_base_conn.clone()))
             .app_data(web::Data::new(schema.clone()))
             .app_data(web::Data::new(strapi_client.clone()))
+            .app_data(web::Data::new(cfg.clone()))
             .wrap(Logger::default())
             .wrap(jwt_auth.clone())
             .configure(configure_health)
@@ -91,6 +91,8 @@ async fn main() -> std::io::Result<()> {
                     .route(web::get().to(graphql_playground)),
             )
             .service(web::resource("/strapi-proxy").route(web::post().to(strapi_proxy_handler)))
+            // Register CORS last so it runs first and always answers preflights / decorates responses
+            .wrap(cors)
     })
     .bind(format!("{host}:{port}"))
     .unwrap_or_else(|_| panic!("Failed to bind to {host}:{port}"));

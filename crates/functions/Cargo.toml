@@ -16,3 +16,6 @@ anyhow = { workspace = true }
 models = { path = "../models" }
 auth-integration = { path = "../auth-integration" }
 http-response = { path = "../http-response" }
+
+[dev-dependencies]
+actix-rt = { workspace = true }

@@ -3,6 +3,7 @@ use http_response::{CustomError, HttpCodeW};
 use models::dto::{user_profile, UserProfile};
 use models::internal::{CreateProfileRequest, ProfileResponse, UpdateProfileRequest};
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use sea_orm::ActiveValue::NotSet;
 use user_profile::Column::UserId;
 use user_profile::Model;
 
@@ -50,7 +51,7 @@ impl ProfileService {
 
         let now = chrono::Utc::now().naive_utc();
         let new_profile = user_profile::ActiveModel {
-            id: Set(Default::default()),
+            id: NotSet, // let DB auto-increment
             uuid: Set(uuid::Uuid::new_v4()),
             user_id: Set(user_id),
             middle_name: Set(request.middle_name),
@@ -69,7 +70,6 @@ impl ProfileService {
             created_at: Set(now),
             updated_at: Set(now),
         };
-
         let profile = new_profile.insert(db).await?;
 
         Ok(profile.into())

@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::dto::UserProfileModel;
 
 /// Request to create a new user profile
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct CreateProfileRequest {
     pub middle_name: Option<String>,
     pub phone: Option<String>,

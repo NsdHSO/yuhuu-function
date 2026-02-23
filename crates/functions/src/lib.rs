@@ -3,5 +3,6 @@ pub mod features;
 
 // Re-export configure functions for backward compatibility
 pub use features::{
-    configure_health, configure_profiles, configure_roles, configure_user_roles, configure_users,
+    configure_bootstrap, configure_health, configure_profiles, configure_roles, configure_user_roles,
+    configure_users,
 };

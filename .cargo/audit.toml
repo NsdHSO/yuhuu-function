@@ -5,7 +5,7 @@ ignore = [
 ]
 
 # Optionally, you can add a note explaining why
-[advisories.informational]
+[advisories.informational_warnings]
 # "unmaintained" and "unsound" advisories will still be reported
 unmaintained = "warn"
 unsound = "warn"

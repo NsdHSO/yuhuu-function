@@ -14,6 +14,7 @@
       <sourceFolder url="file://$MODULE_DIR$/crates/auth-integration/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crates/auth-integration/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crates/church-graphql/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/functions/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

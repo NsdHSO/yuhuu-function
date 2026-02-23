@@ -1,6 +1,6 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
-use http_response::{create_response, CustomError, HttpCodeW};
+use http_response::{create_response, HttpCodeW};
 use models::internal::{BootstrapCreated, BootstrapRequest, BootstrapResponse};
 
 use crate::features::profiles::service::ProfileService;
@@ -30,9 +30,9 @@ pub async fn bootstrap(
             // missing
             if let Some(req) = &body {
                 if req.create_profile_if_missing {
-if let Some(payload) = req.profile.as_ref() {
+                    if let Some(payload) = req.profile.as_ref() {
                         let created_profile =
-ProfileService::create_profile(&db, user.id, payload.clone()).await?;
+                            ProfileService::create_profile(&db, user.id, payload.clone()).await?;
                         created.profile = true;
                         Some(created_profile)
                     } else {

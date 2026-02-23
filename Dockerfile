@@ -6,6 +6,7 @@ WORKDIR /app
 COPY Cargo.toml ./
 COPY main-app ./main-app
 COPY crates ./crates
+COPY migration ./migration
 
 # Build application
 RUN cargo build --release -p main-app

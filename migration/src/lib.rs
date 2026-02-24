@@ -14,6 +14,8 @@ mod m20260203_000011_create_user_ministries_table;
 mod m20260203_000012_create_attendances_table;
 mod m20260203_000013_create_givings_table;
 mod m20260203_000014_seed_default_roles;
+mod m20260203_000015_create_dinners_table;
+mod m20260203_000016_create_dinner_participants_table;
 
 pub struct Migrator;
 
@@ -35,6 +37,8 @@ impl MigratorTrait for Migrator {
             Box::new(m20260203_000012_create_attendances_table::Migration),
             Box::new(m20260203_000013_create_givings_table::Migration),
             Box::new(m20260203_000014_seed_default_roles::Migration),
+            Box::new(m20260203_000015_create_dinners_table::Migration),
+            Box::new(m20260203_000016_create_dinner_participants_table::Migration),
         ]
     }
 }

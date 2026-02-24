@@ -3,6 +3,8 @@
 
 pub mod attendance;
 pub mod cell_group;
+pub mod dinner;
+pub mod dinner_participant;
 pub mod giving;
 pub mod ministry;
 pub mod role;
@@ -20,6 +22,11 @@ pub use attendance::{
 };
 pub use cell_group::{
     ActiveModel as CellGroupActiveModel, Entity as CellGroup, Model as CellGroupModel,
+};
+pub use dinner::{ActiveModel as DinnerActiveModel, Entity as Dinner, Model as DinnerModel};
+pub use dinner_participant::{
+    ActiveModel as DinnerParticipantActiveModel, Entity as DinnerParticipant,
+    Model as DinnerParticipantModel,
 };
 pub use giving::{ActiveModel as GivingActiveModel, Entity as Giving, Model as GivingModel};
 pub use ministry::{

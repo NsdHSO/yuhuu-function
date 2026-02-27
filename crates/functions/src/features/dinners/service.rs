@@ -74,13 +74,24 @@ impl DinnerService {
         db: &DatabaseConnection,
         page: i64,
         limit: i64,
+        dinner_date: Option<String>,
     ) -> Result<serde_json::Value, CustomError> {
         let page = if page < 1 { 1 } else { page };
         let limit = if (1..=100).contains(&limit) { limit } else { 20 };
 
         use models::dto::dinner::Column;
-        let dinners: Vec<DinnerResponse> = Dinner::find()
-            .order_by(Column::DinnerDate, sea_orm::Order::Desc)
+
+        let mut query = Dinner::find().order_by(Column::DinnerDate, sea_orm::Order::Desc);
+
+        if let Some(date_str) = dinner_date {
+            let date = chrono::NaiveDate::parse_from_str(&date_str, "%Y-%m-%d")
+                .map_err(|_| CustomError::new(HttpCodeW::BadRequest, "Invalid date format. Use YYYY-MM-DD".to_string()))?;
+            query = query.filter(Column::DinnerDate.gte(date));
+        }
+
+        let count_query = query.clone();
+        
+        let dinners: Vec<DinnerResponse> = query
             .paginate(db, limit as u64)
             .fetch_page((page - 1) as u64)
             .await?
@@ -97,7 +108,7 @@ impl DinnerService {
             })
             .collect();
 
-        let total = Dinner::find().count(db).await?;
+        let total = count_query.count(db).await?;
 
         Ok(json!({
             "data": dinners,
@@ -121,27 +132,13 @@ impl DinnerService {
             .await?
             .ok_or_else(|| CustomError::new(HttpCodeW::NotFound, "Dinner not found".to_string()))?;
 
-        use models::dto::dinner_participant::Column;
-        let existing = DinnerParticipant::find()
-            .filter(Column::DinnerId.eq(dinner_id))
-            .filter(Column::UserId.eq(request.user_id))
-            .one(db)
-            .await?;
-
-        if existing.is_some() {
-            return Err(CustomError::new(
-                HttpCodeW::Conflict,
-                "User already recorded for this dinner".to_string(),
-            ));
-        }
-
         let now = chrono::Utc::now().naive_utc();
         let uuid = uuid::Uuid::new_v4();
 
         let new_participant = DinnerParticipantActiveModel {
             uuid: Set(uuid),
             dinner_id: Set(dinner.id),
-            user_id: Set(request.user_id),
+            username: Set(request.username),
             notes: Set(request.notes),
             recorded_by: Set(recorded_by),
             created_at: Set(now),
@@ -155,7 +152,7 @@ impl DinnerService {
             id: participant.id,
             uuid: participant.uuid,
             dinner_id: participant.dinner_id,
-            user_id: participant.user_id,
+            username: participant.username,
             notes: participant.notes,
             recorded_by: participant.recorded_by,
             created_at: participant.created_at,
@@ -195,7 +192,7 @@ impl DinnerService {
                 id: p.id,
                 uuid: p.uuid,
                 dinner_id: p.dinner_id,
-                user_id: p.user_id,
+                username: p.username,
                 notes: p.notes,
                 recorded_by: p.recorded_by,
                 created_at: p.created_at,
@@ -253,11 +250,11 @@ mod tests {
     #[test]
     fn test_add_participant_request() {
         let request = AddParticipantRequest {
-            user_id: 1,
+            username: "john_doe".to_string(),
             notes: Some("Vegetarian".to_string()),
         };
 
-        assert_eq!(request.user_id, 1);
+        assert_eq!(request.username, "john_doe");
         assert_eq!(request.notes.unwrap(), "Vegetarian");
     }
 
@@ -291,7 +288,7 @@ mod tests {
             id: 1,
             uuid: participant_uuid,
             dinner_id: 1,
-            user_id: 5,
+            username: "john_doe".to_string(),
             notes: None,
             recorded_by: Some(2),
             created_at: now,
@@ -299,7 +296,7 @@ mod tests {
         };
 
         assert_eq!(response.dinner_id, 1);
-        assert_eq!(response.user_id, 5);
+        assert_eq!(response.username, "john_doe");
         assert!(response.notes.is_none());
     }
 
@@ -324,7 +321,7 @@ mod tests {
             id: 1,
             uuid: participant_uuid,
             dinner_id: 1,
-            user_id: 5,
+            username: "john_doe".to_string(),
             notes: None,
             recorded_by: Some(1),
             created_at: now,
@@ -338,6 +335,6 @@ mod tests {
 
         assert_eq!(response.dinner.id, 1);
         assert_eq!(response.participants.len(), 1);
-        assert_eq!(response.participants[0].user_id, 5);
+        assert_eq!(response.participants[0].username, "john_doe");
     }
 }

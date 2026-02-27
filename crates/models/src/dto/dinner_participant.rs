@@ -11,7 +11,7 @@ pub struct Model {
     pub uuid: Uuid,
 
     pub dinner_id: i64,
-    pub user_id: i64,
+    pub username: String,
     pub notes: Option<String>,
     pub recorded_by: Option<i64>,
     pub created_at: DateTime,
@@ -28,12 +28,6 @@ pub enum Relation {
     Dinner,
     #[sea_orm(
         belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id"
-    )]
-    User,
-    #[sea_orm(
-        belongs_to = "super::user::Entity",
         from = "Column::RecordedBy",
         to = "super::user::Column::Id"
     )]
@@ -43,12 +37,6 @@ pub enum Relation {
 impl Related<super::dinner::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Dinner.def()
-    }
-}
-
-impl Related<super::user::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::User.def()
     }
 }
 

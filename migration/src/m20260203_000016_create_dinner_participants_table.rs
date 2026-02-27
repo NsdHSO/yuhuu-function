@@ -6,6 +6,16 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        // Drop table if exists (to handle schema changes)
+        manager
+            .drop_table(
+                Table::drop()
+                    .table((Alias::new("church"), DinnerParticipants::Table))
+                    .to_owned(),
+            )
+            .await
+            .ok(); // Ignore error if table doesn't exist
+
         manager
             .create_table(
                 Table::create()
@@ -30,8 +40,8 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(DinnerParticipants::UserId)
-                            .big_integer()
+                        ColumnDef::new(DinnerParticipants::Username)
+                            .string()
                             .not_null(),
                     )
                     .col(ColumnDef::new(DinnerParticipants::Notes).text())
@@ -67,20 +77,6 @@ impl MigrationTrait for Migration {
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk_dinner_participants_user_id")
-                            .from(
-                                (Alias::new("church"), DinnerParticipants::Table),
-                                DinnerParticipants::UserId,
-                            )
-                            .to(
-                                (Alias::new("church"), Alias::new("users")),
-                                Alias::new("id"),
-                            )
-                            .on_delete(ForeignKeyAction::Cascade)
-                            .on_update(ForeignKeyAction::Cascade),
-                    )
-                    .foreign_key(
-                        ForeignKey::create()
                             .name("fk_dinner_participants_recorded_by")
                             .from(
                                 (Alias::new("church"), DinnerParticipants::Table),
@@ -103,6 +99,7 @@ impl MigrationTrait for Migration {
                     .name("idx_dinner_participants_dinner_id")
                     .table((Alias::new("church"), DinnerParticipants::Table))
                     .col(DinnerParticipants::DinnerId)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;
@@ -127,7 +124,7 @@ enum DinnerParticipants {
     Id,
     Uuid,
     DinnerId,
-    UserId,
+    Username,
     Notes,
     RecordedBy,
     CreatedAt,

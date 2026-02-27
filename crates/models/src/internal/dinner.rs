@@ -21,7 +21,7 @@ pub struct DinnerResponse {
 
 #[derive(Debug, Deserialize)]
 pub struct AddParticipantRequest {
-    pub user_id: i64,
+    pub username: String,
     pub notes: Option<String>,
 }
 
@@ -30,7 +30,7 @@ pub struct ParticipantResponse {
     pub id: i64,
     pub uuid: uuid::Uuid,
     pub dinner_id: i64,
-    pub user_id: i64,
+    pub username: String,
     pub notes: Option<String>,
     pub recorded_by: Option<i64>,
     pub created_at: chrono::NaiveDateTime,

@@ -28,7 +28,7 @@ pub async fn list_dinners(
     db: web::Data<sea_orm::DatabaseConnection>,
     query: web::Query<ListDinnersQuery>,
 ) -> Result<HttpResponse> {
-    let result = DinnerService::list_dinners(&db, query.page, query.limit).await?;
+    let result = DinnerService::list_dinners(&db, query.page, query.limit, query.dinner_date.clone()).await?;
     let resp = create_response(result, HttpCodeW::OK);
     Ok(HttpResponse::Ok().json(resp))
 }
@@ -64,16 +64,10 @@ pub async fn remove_participant(
 
 #[derive(serde::Deserialize)]
 pub struct ListDinnersQuery {
-    #[serde(default = "default_page")]
+    #[serde(default)]
     pub page: i64,
-    #[serde(default = "default_limit")]
+    #[serde(default)]
     pub limit: i64,
-}
-
-fn default_page() -> i64 {
-    1
-}
-
-fn default_limit() -> i64 {
-    20
+    #[serde(default)]
+    pub dinner_date: Option<String>,
 }

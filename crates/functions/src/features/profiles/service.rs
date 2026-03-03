@@ -67,6 +67,9 @@ impl ProfileService {
             emergency_contact_relationship: Set(request.emergency_contact_relationship),
             profile_picture_url: Set(request.profile_picture_url),
             bio: Set(request.bio),
+            education_level: Set(request.education_level),
+            field_of_study: Set(request.field_of_study),
+            languages_spoken: Set(request.languages_spoken),
             created_at: Set(now),
             updated_at: Set(now),
         };
@@ -126,6 +129,15 @@ impl ProfileService {
         }
         if request.bio.is_some() {
             active_profile.bio = Set(request.bio);
+        }
+        if request.education_level.is_some() {
+            active_profile.education_level = Set(request.education_level);
+        }
+        if request.field_of_study.is_some() {
+            active_profile.field_of_study = Set(request.field_of_study);
+        }
+        if request.languages_spoken.is_some() {
+            active_profile.languages_spoken = Set(request.languages_spoken);
         }
 
         active_profile.updated_at = Set(chrono::Utc::now().naive_utc());

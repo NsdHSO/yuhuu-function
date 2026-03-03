@@ -15,28 +15,27 @@ pub struct Model {
     #[sea_orm(unique)]
     pub user_id: i64,
 
-    // Contact Information
     pub middle_name: Option<String>,
     pub phone: Option<String>,
     pub phone_secondary: Option<String>,
 
-    // Demographics
     pub date_of_birth: Option<Date>,
-    pub gender: Option<String>,         // Male, Female
-    pub marital_status: Option<String>, // Single, Married, Widowed, Divorced
+    pub gender: Option<String>,
+    pub marital_status: Option<String>,
     pub occupation: Option<String>,
     pub nationality: Option<String>,
 
-    // Emergency Contact
     pub emergency_contact_name: Option<String>,
     pub emergency_contact_phone: Option<String>,
     pub emergency_contact_relationship: Option<String>,
 
-    // Profile
     pub profile_picture_url: Option<String>,
     pub bio: Option<String>,
 
-    // Timestamps
+    pub education_level: Option<String>,
+    pub field_of_study: Option<String>,
+    pub languages_spoken: Option<String>,
+
     pub created_at: DateTime,
     pub updated_at: DateTime,
 }

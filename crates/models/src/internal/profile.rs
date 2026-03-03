@@ -8,7 +8,7 @@ pub struct CreateProfileRequest {
     pub middle_name: Option<String>,
     pub phone: Option<String>,
     pub phone_secondary: Option<String>,
-    pub date_of_birth: Option<String>, // "YYYY-MM-DD" format
+    pub date_of_birth: Option<String>,
     pub gender: Option<String>,
     pub marital_status: Option<String>,
     pub occupation: Option<String>,
@@ -18,6 +18,9 @@ pub struct CreateProfileRequest {
     pub emergency_contact_relationship: Option<String>,
     pub profile_picture_url: Option<String>,
     pub bio: Option<String>,
+    pub education_level: Option<String>,
+    pub field_of_study: Option<String>,
+    pub languages_spoken: Option<String>,
 }
 
 /// Request to update user profile (partial update)
@@ -36,6 +39,9 @@ pub struct UpdateProfileRequest {
     pub emergency_contact_relationship: Option<String>,
     pub profile_picture_url: Option<String>,
     pub bio: Option<String>,
+    pub education_level: Option<String>,
+    pub field_of_study: Option<String>,
+    pub languages_spoken: Option<String>,
 }
 
 /// Response for user profile data
@@ -56,6 +62,9 @@ pub struct ProfileResponse {
     pub emergency_contact_relationship: Option<String>,
     pub profile_picture_url: Option<String>,
     pub bio: Option<String>,
+    pub education_level: Option<String>,
+    pub field_of_study: Option<String>,
+    pub languages_spoken: Option<String>,
 }
 
 impl From<UserProfileModel> for ProfileResponse {
@@ -76,6 +85,9 @@ impl From<UserProfileModel> for ProfileResponse {
             emergency_contact_relationship: profile.emergency_contact_relationship,
             profile_picture_url: profile.profile_picture_url,
             bio: profile.bio,
+            education_level: profile.education_level,
+            field_of_study: profile.field_of_study,
+            languages_spoken: profile.languages_spoken,
         }
     }
 }

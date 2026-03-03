@@ -41,6 +41,18 @@ pub enum Relation {
 
     #[sea_orm(has_many = "super::giving::Entity")]
     Givings,
+
+    #[sea_orm(has_many = "super::family_relationship::Entity")]
+    FamilyRelationships,
+
+    #[sea_orm(has_many = "super::spiritual_milestone::Entity")]
+    SpiritualMilestones,
+
+    #[sea_orm(has_many = "super::membership_history::Entity")]
+    MembershipHistories,
+
+    #[sea_orm(has_many = "super::user_skill::Entity")]
+    UserSkills,
 }
 
 impl Related<super::user_profile::Entity> for Entity {
@@ -82,6 +94,30 @@ impl Related<super::attendance::Entity> for Entity {
 impl Related<super::giving::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Givings.def()
+    }
+}
+
+impl Related<super::family_relationship::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::FamilyRelationships.def()
+    }
+}
+
+impl Related<super::spiritual_milestone::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::SpiritualMilestones.def()
+    }
+}
+
+impl Related<super::membership_history::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::MembershipHistories.def()
+    }
+}
+
+impl Related<super::user_skill::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::UserSkills.def()
     }
 }
 

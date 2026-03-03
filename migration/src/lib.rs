@@ -16,6 +16,11 @@ mod m20260203_000013_create_givings_table;
 mod m20260203_000014_seed_default_roles;
 mod m20260203_000015_create_dinners_table;
 mod m20260203_000016_create_dinner_participants_table;
+mod m20260203_000017_create_family_relationships_table;
+mod m20260203_000018_create_spiritual_milestones_table;
+mod m20260203_000019_create_membership_history_table;
+mod m20260203_000020_create_user_skills_table;
+mod m20260203_000021_alter_user_profiles_add_education_fields;
 
 pub struct Migrator;
 
@@ -39,6 +44,11 @@ impl MigratorTrait for Migrator {
             Box::new(m20260203_000014_seed_default_roles::Migration),
             Box::new(m20260203_000015_create_dinners_table::Migration),
             Box::new(m20260203_000016_create_dinner_participants_table::Migration),
+            Box::new(m20260203_000017_create_family_relationships_table::Migration),
+            Box::new(m20260203_000018_create_spiritual_milestones_table::Migration),
+            Box::new(m20260203_000019_create_membership_history_table::Migration),
+            Box::new(m20260203_000020_create_user_skills_table::Migration),
+            Box::new(m20260203_000021_alter_user_profiles_add_education_fields::Migration),
         ]
     }
 }

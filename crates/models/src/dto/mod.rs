@@ -5,15 +5,19 @@ pub mod attendance;
 pub mod cell_group;
 pub mod dinner;
 pub mod dinner_participant;
+pub mod family_relationship;
 pub mod giving;
+pub mod membership_history;
 pub mod ministry;
 pub mod role;
+pub mod spiritual_milestone;
 pub mod user;
 pub mod user_address;
 pub mod user_membership;
 pub mod user_ministry;
 pub mod user_profile;
 pub mod user_role;
+pub mod user_skill;
 pub mod zone;
 
 // Re-export for convenience
@@ -28,11 +32,23 @@ pub use dinner_participant::{
     ActiveModel as DinnerParticipantActiveModel, Entity as DinnerParticipant,
     Model as DinnerParticipantModel,
 };
+pub use family_relationship::{
+    ActiveModel as FamilyRelationshipActiveModel, Entity as FamilyRelationship,
+    Model as FamilyRelationshipModel,
+};
 pub use giving::{ActiveModel as GivingActiveModel, Entity as Giving, Model as GivingModel};
+pub use membership_history::{
+    ActiveModel as MembershipHistoryActiveModel, Entity as MembershipHistory,
+    Model as MembershipHistoryModel,
+};
 pub use ministry::{
     ActiveModel as MinistryActiveModel, Entity as Ministry, Model as MinistryModel,
 };
 pub use role::{ActiveModel as RoleActiveModel, Entity as Role, Model as RoleModel};
+pub use spiritual_milestone::{
+    ActiveModel as SpiritualMilestoneActiveModel, Entity as SpiritualMilestone,
+    Model as SpiritualMilestoneModel,
+};
 pub use user::{ActiveModel as UserActiveModel, Entity as User, Model as UserModel};
 pub use user_address::{
     ActiveModel as UserAddressActiveModel, Entity as UserAddress, Model as UserAddressModel,
@@ -49,5 +65,8 @@ pub use user_profile::{
 };
 pub use user_role::{
     ActiveModel as UserRoleActiveModel, Entity as UserRole, Model as UserRoleModel,
+};
+pub use user_skill::{
+    ActiveModel as UserSkillActiveModel, Entity as UserSkill, Model as UserSkillModel,
 };
 pub use zone::{ActiveModel as ZoneActiveModel, Entity as Zone, Model as ZoneModel};

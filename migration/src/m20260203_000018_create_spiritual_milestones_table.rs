@@ -8,80 +8,71 @@ impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
             .get_connection()
-            .execute_unprepared("DROP TABLE IF EXISTS church.dinner_participants")
+            .execute_unprepared("DROP TABLE IF EXISTS church.spiritual_milestones")
             .await?;
 
         manager
             .create_table(
                 Table::create()
-                    .table((Alias::new("church"), DinnerParticipants::Table))
+                    .table((Alias::new("church"), SpiritualMilestones::Table))
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(DinnerParticipants::Id)
+                        ColumnDef::new(SpiritualMilestones::Id)
                             .big_integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
                     .col(
-                        ColumnDef::new(DinnerParticipants::Uuid)
-                            .uuid()
-                            .not_null()
-                            .unique_key(),
-                    )
-                    .col(
-                        ColumnDef::new(DinnerParticipants::DinnerId)
+                        ColumnDef::new(SpiritualMilestones::UserId)
                             .big_integer()
                             .not_null(),
                     )
                     .col(
-                        ColumnDef::new(DinnerParticipants::Username)
+                        ColumnDef::new(SpiritualMilestones::MilestoneType)
                             .string()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(DinnerParticipants::Notes).text())
                     .col(
-                        ColumnDef::new(DinnerParticipants::RecordedBy)
-                            .big_integer(),
+                        ColumnDef::new(SpiritualMilestones::MilestoneDate)
+                            .date(),
                     )
                     .col(
-                        ColumnDef::new(DinnerParticipants::CreatedAt)
+                        ColumnDef::new(SpiritualMilestones::Location)
+                            .string(),
+                    )
+                    .col(
+                        ColumnDef::new(SpiritualMilestones::Officiant)
+                            .string(),
+                    )
+                    .col(
+                        ColumnDef::new(SpiritualMilestones::Notes)
+                            .text(),
+                    )
+                    .col(
+                        ColumnDef::new(SpiritualMilestones::CreatedAt)
                             .timestamp()
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
                     .col(
-                        ColumnDef::new(DinnerParticipants::UpdatedAt)
+                        ColumnDef::new(SpiritualMilestones::UpdatedAt)
                             .timestamp()
                             .not_null()
                             .default(Expr::current_timestamp()),
                     )
                     .foreign_key(
                         ForeignKey::create()
-                            .name("fk_dinner_participants_dinner_id")
+                            .name("fk_spiritual_milestones_user_id")
                             .from(
-                                (Alias::new("church"), DinnerParticipants::Table),
-                                DinnerParticipants::DinnerId,
-                            )
-                            .to(
-                                (Alias::new("church"), Alias::new("dinners")),
-                                Alias::new("id"),
-                            )
-                            .on_delete(ForeignKeyAction::Cascade)
-                            .on_update(ForeignKeyAction::Cascade),
-                    )
-                    .foreign_key(
-                        ForeignKey::create()
-                            .name("fk_dinner_participants_recorded_by")
-                            .from(
-                                (Alias::new("church"), DinnerParticipants::Table),
-                                DinnerParticipants::RecordedBy,
+                                (Alias::new("church"), SpiritualMilestones::Table),
+                                SpiritualMilestones::UserId,
                             )
                             .to(
                                 (Alias::new("church"), Alias::new("users")),
                                 Alias::new("id"),
                             )
-                            .on_delete(ForeignKeyAction::SetNull)
+                            .on_delete(ForeignKeyAction::Cascade)
                             .on_update(ForeignKeyAction::Cascade),
                     )
                     .to_owned(),
@@ -91,9 +82,11 @@ impl MigrationTrait for Migration {
         manager
             .create_index(
                 Index::create()
-                    .name("idx_dinner_participants_dinner_id")
-                    .table((Alias::new("church"), DinnerParticipants::Table))
-                    .col(DinnerParticipants::DinnerId)
+                    .name("idx_spiritual_milestones_user_milestone_unique")
+                    .table((Alias::new("church"), SpiritualMilestones::Table))
+                    .col(SpiritualMilestones::UserId)
+                    .col(SpiritualMilestones::MilestoneType)
+                    .unique()
                     .if_not_exists()
                     .to_owned(),
             )
@@ -106,7 +99,7 @@ impl MigrationTrait for Migration {
         manager
             .drop_table(
                 Table::drop()
-                    .table((Alias::new("church"), DinnerParticipants::Table))
+                    .table((Alias::new("church"), SpiritualMilestones::Table))
                     .to_owned(),
             )
             .await
@@ -114,14 +107,15 @@ impl MigrationTrait for Migration {
 }
 
 #[derive(DeriveIden)]
-enum DinnerParticipants {
+enum SpiritualMilestones {
     Table,
     Id,
-    Uuid,
-    DinnerId,
-    Username,
+    UserId,
+    MilestoneType,
+    MilestoneDate,
+    Location,
+    Officiant,
     Notes,
-    RecordedBy,
     CreatedAt,
     UpdatedAt,
 }

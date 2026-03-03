@@ -26,6 +26,7 @@ pub struct ConfigService {
     pub sqlx_log: bool,
     pub ssl_cert_days: String,
     pub strapi_api: String,
+    pub mode: String,
 }
 
 impl ConfigService {
@@ -65,6 +66,7 @@ impl ConfigService {
                 .unwrap_or(false),
             ssl_cert_days: Self::get_value(&secrets, "SSL_CERT_DAYS", ""),
             strapi_api: Self::get_value(&secrets, "STRAPI_API", ""),
+            mode: Self::get_value_required(&secrets, "MODE"),
         }
     }
 
@@ -124,6 +126,7 @@ impl ConfigService {
             "SQLX_LOG",
             "SSL_CERT_DAYS",
             "STRAPI_API",
+            "MODE"
         ];
 
         let mut out: HashMap<String, String> = HashMap::new();

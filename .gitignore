@@ -91,6 +91,7 @@ lcov.info
 /doc
 book/
 mdbook-*/
+docs/*
 
 # Backup files
 *.bak

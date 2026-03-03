@@ -8,7 +8,9 @@ use database::config::init;
 use dotenvy::dotenv;
 use env_logger::{Builder, Env};
 use functions::{
-    configure_bootstrap, configure_dinners, configure_health, configure_profiles, configure_roles, configure_user_roles,
+    configure_bootstrap, configure_dinners, configure_family_relationships, configure_health,
+    configure_membership_history, configure_profiles, configure_roles,
+    configure_spiritual_milestones, configure_user_roles, configure_user_skills,
     configure_users,
 };
 use graphql::{
@@ -81,12 +83,16 @@ async fn main() -> std::io::Result<()> {
             .configure(configure_health)
             .service(
                 web::scope("/v1")
-                    .configure(configure_profiles) // Register profiles first (more specific: /users/{id}/profile)
-                    .configure(configure_user_roles) // User-role assignments (/users/{id}/roles, /roles/{id}/users)
-                    .configure(configure_users) // Then users (less specific: /users/{id})
-                    .configure(configure_roles) // Roles management
-                    .configure(configure_bootstrap) // Bootstrap flow (link + optional profile)
-                    .configure(configure_dinners), // Dinner tracking
+                    .configure(configure_profiles)
+                    .configure(configure_user_roles)
+                    .configure(configure_users)
+                    .configure(configure_roles)
+                    .configure(configure_bootstrap)
+                    .configure(configure_dinners)
+                    .configure(configure_family_relationships)
+                    .configure(configure_spiritual_milestones)
+                    .configure(configure_membership_history)
+                    .configure(configure_user_skills),
             )
             .service(
                 web::resource("/graphql")

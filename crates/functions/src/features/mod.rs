@@ -1,15 +1,23 @@
 pub mod bootstrap;
 pub mod dinners;
+pub mod family_relationships;
 pub mod health;
+pub mod membership_history;
 pub mod profiles;
 pub mod roles;
+pub mod spiritual_milestones;
 pub mod user_roles;
+pub mod user_skills;
 pub mod users;
 
 pub use bootstrap::configure_bootstrap;
 pub use dinners::configure_dinners;
+pub use family_relationships::configure_family_relationships;
 pub use health::configure_health;
+pub use membership_history::configure_membership_history;
 pub use profiles::configure_profiles;
 pub use roles::configure_roles;
+pub use spiritual_milestones::configure_spiritual_milestones;
 pub use user_roles::configure_user_roles;
+pub use user_skills::configure_user_skills;
 pub use users::configure_users;

@@ -4,7 +4,7 @@ use super::handlers;
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
-        web::scope("/v1/profiles/me/membership-history")
+        web::scope("/profiles/me/membership-history")
             .route("", web::post().to(handlers::create_membership))
             .route("", web::get().to(handlers::list_memberships))
             .route("/{id}", web::get().to(handlers::get_membership))

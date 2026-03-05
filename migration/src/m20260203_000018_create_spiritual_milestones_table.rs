@@ -33,22 +33,10 @@ impl MigrationTrait for Migration {
                             .string()
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(SpiritualMilestones::MilestoneDate)
-                            .date(),
-                    )
-                    .col(
-                        ColumnDef::new(SpiritualMilestones::Location)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(SpiritualMilestones::Officiant)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(SpiritualMilestones::Notes)
-                            .text(),
-                    )
+                    .col(ColumnDef::new(SpiritualMilestones::MilestoneDate).date())
+                    .col(ColumnDef::new(SpiritualMilestones::Location).string())
+                    .col(ColumnDef::new(SpiritualMilestones::Officiant).string())
+                    .col(ColumnDef::new(SpiritualMilestones::Notes).text())
                     .col(
                         ColumnDef::new(SpiritualMilestones::CreatedAt)
                             .timestamp()

@@ -11,7 +11,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute_unprepared(
                 "ALTER TABLE church.user_profiles \
-                 ADD COLUMN IF NOT EXISTS education_level VARCHAR"
+                 ADD COLUMN IF NOT EXISTS education_level VARCHAR",
             )
             .await?;
 
@@ -19,7 +19,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute_unprepared(
                 "ALTER TABLE church.user_profiles \
-                 ADD COLUMN IF NOT EXISTS field_of_study VARCHAR"
+                 ADD COLUMN IF NOT EXISTS field_of_study VARCHAR",
             )
             .await?;
 
@@ -27,7 +27,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute_unprepared(
                 "ALTER TABLE church.user_profiles \
-                 ADD COLUMN IF NOT EXISTS languages_spoken VARCHAR"
+                 ADD COLUMN IF NOT EXISTS languages_spoken VARCHAR",
             )
             .await?;
 
@@ -40,7 +40,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute_unprepared(
                 "ALTER TABLE church.user_profiles \
-                 DROP COLUMN IF EXISTS languages_spoken"
+                 DROP COLUMN IF EXISTS languages_spoken",
             )
             .await?;
 
@@ -48,7 +48,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute_unprepared(
                 "ALTER TABLE church.user_profiles \
-                 DROP COLUMN IF EXISTS field_of_study"
+                 DROP COLUMN IF EXISTS field_of_study",
             )
             .await?;
 
@@ -56,7 +56,7 @@ impl MigrationTrait for Migration {
             .get_connection()
             .execute_unprepared(
                 "ALTER TABLE church.user_profiles \
-                 DROP COLUMN IF EXISTS education_level"
+                 DROP COLUMN IF EXISTS education_level",
             )
             .await?;
 

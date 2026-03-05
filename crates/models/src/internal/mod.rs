@@ -1,6 +1,7 @@
 // API request/response types (DTOs)
 // These should be used in handlers and external APIs
 
+pub mod admin;
 pub mod bootstrap;
 pub mod dinner;
 pub mod family_relationship;
@@ -12,6 +13,7 @@ pub mod user;
 pub mod user_role;
 pub mod user_skill;
 
+pub use admin::*;
 pub use bootstrap::*;
 pub use dinner::*;
 pub use family_relationship::*;

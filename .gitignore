@@ -135,3 +135,6 @@ docker-compose.override.yml
 # Misc
 *.orig
 .cache/
+
+# Git worktrees
+.worktrees/

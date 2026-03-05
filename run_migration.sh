@@ -20,8 +20,18 @@ fi
 read -r -p "Database schema to use [auth] (e.g., auth or public): " DB_SCHEMA
 DB_SCHEMA="church"
 
+# Modify DATABASE_URL to set search_path to church schema
+# This ensures seaql_migrations table is created in church schema
+if [[ "$DATABASE_URL" == *"?"* ]]; then
+  # URL already has query parameters
+  MODIFIED_URL="${DATABASE_URL}&options=-c%20search_path%3D${DB_SCHEMA}%2Cpublic"
+else
+  # URL has no query parameters
+  MODIFIED_URL="${DATABASE_URL}?options=-c%20search_path%3D${DB_SCHEMA}%2Cpublic"
+fi
+
 echo "Running database migrations against schema: ${DB_SCHEMA} ..."
 # Execute without printing the URL to avoid exposing credentials
-cargo run --manifest-path migration/Cargo.toml -- --database-url "$DATABASE_URL" --database-schema "$DB_SCHEMA"
+cargo run --manifest-path migration/Cargo.toml -- --database-url "$MODIFIED_URL" --database-schema "$DB_SCHEMA"
 
 echo "Migrations completed!"

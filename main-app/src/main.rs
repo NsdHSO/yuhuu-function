@@ -8,8 +8,8 @@ use database::config::init;
 use dotenvy::dotenv;
 use env_logger::{Builder, Env};
 use functions::{
-    configure_bootstrap, configure_dinners, configure_family_relationships, configure_health,
-    configure_membership_history, configure_profiles, configure_roles,
+    configure_admin, configure_bootstrap, configure_dinners, configure_family_relationships,
+    configure_health, configure_membership_history, configure_profiles, configure_roles,
     configure_spiritual_milestones, configure_user_roles, configure_user_skills,
     configure_users,
 };
@@ -92,7 +92,8 @@ async fn main() -> std::io::Result<()> {
                     .configure(configure_family_relationships)
                     .configure(configure_spiritual_milestones)
                     .configure(configure_membership_history)
-                    .configure(configure_user_skills),
+                    .configure(configure_user_skills)
+                    .configure(configure_admin),
             )
             .service(
                 web::resource("/graphql")

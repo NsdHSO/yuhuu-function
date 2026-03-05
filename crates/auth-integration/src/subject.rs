@@ -5,6 +5,8 @@ use futures_util::future::{ready, Ready};
 pub struct Subject {
     pub sub: String,
     pub token_uuid: String,
+    pub role: String,
+    pub email: Option<String>,
 }
 
 impl FromRequest for Subject {

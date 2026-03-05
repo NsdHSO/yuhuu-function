@@ -18,17 +18,8 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(
-                        ColumnDef::new(Dinners::Uuid)
-                            .uuid()
-                            .not_null()
-                            .unique_key(),
-                    )
-                    .col(
-                        ColumnDef::new(Dinners::DinnerDate)
-                            .date()
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Dinners::Uuid).uuid().not_null().unique_key())
+                    .col(ColumnDef::new(Dinners::DinnerDate).date().not_null())
                     .col(ColumnDef::new(Dinners::MealType).string().not_null())
                     .col(ColumnDef::new(Dinners::Description).text())
                     .col(ColumnDef::new(Dinners::RecordedBy).big_integer())
@@ -47,10 +38,7 @@ impl MigrationTrait for Migration {
                     .foreign_key(
                         ForeignKey::create()
                             .name("fk_dinners_recorded_by")
-                            .from(
-                                (Alias::new("church"), Dinners::Table),
-                                Dinners::RecordedBy,
-                            )
+                            .from((Alias::new("church"), Dinners::Table), Dinners::RecordedBy)
                             .to(
                                 (Alias::new("church"), Alias::new("users")),
                                 Alias::new("id"),

@@ -23,28 +23,11 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(
-                        ColumnDef::new(UserSkills::UserId)
-                            .big_integer()
-                            .not_null(),
-                    )
-                    .col(
-                        ColumnDef::new(UserSkills::SkillName)
-                            .string()
-                            .not_null(),
-                    )
-                    .col(
-                        ColumnDef::new(UserSkills::SkillCategory)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(UserSkills::ProficiencyLevel)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(UserSkills::YearsOfExperience)
-                            .integer(),
-                    )
+                    .col(ColumnDef::new(UserSkills::UserId).big_integer().not_null())
+                    .col(ColumnDef::new(UserSkills::SkillName).string().not_null())
+                    .col(ColumnDef::new(UserSkills::SkillCategory).string())
+                    .col(ColumnDef::new(UserSkills::ProficiencyLevel).string())
+                    .col(ColumnDef::new(UserSkills::YearsOfExperience).integer())
                     .col(
                         ColumnDef::new(UserSkills::IsWillingToServe)
                             .boolean()

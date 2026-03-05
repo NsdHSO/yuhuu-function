@@ -57,6 +57,8 @@ struct IntrospectResponse {
     active: bool,
     sub: Option<String>,
     token_uuid: Option<String>,
+    role: Option<String>,
+    email: Option<String>,
 }
 
 impl<S, B> Service<ServiceRequest> for JwtAuthMiddleware<S>
@@ -145,6 +147,8 @@ where
                 let subject = crate::subject::Subject {
                     sub,
                     token_uuid: uuid,
+                    role: body.role.unwrap_or_else(|| "Member".to_string()),
+                    email: body.email,
                 };
                 req.extensions_mut().insert(subject);
             }

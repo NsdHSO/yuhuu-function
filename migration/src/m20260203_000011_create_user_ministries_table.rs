@@ -95,6 +95,7 @@ impl MigrationTrait for Migration {
                     .col(UserMinistries::UserId)
                     .col(UserMinistries::MinistryId)
                     .unique()
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;

@@ -95,6 +95,7 @@ impl MigrationTrait for Migration {
                     .table((Alias::new("church"), Givings::Table))
                     .col(Givings::GivingDate)
                     .col(Givings::GivingType)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;
@@ -106,6 +107,7 @@ impl MigrationTrait for Migration {
                     .name("idx_givings_receipt_number")
                     .table((Alias::new("church"), Givings::Table))
                     .col(Givings::ReceiptNumber)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;

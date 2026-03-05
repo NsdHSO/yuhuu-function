@@ -45,6 +45,7 @@ impl MigrationTrait for Migration {
                     .name("idx_roles_name")
                     .table((Alias::new("church"), Roles::Table))
                     .col(Roles::Name)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;
@@ -56,6 +57,7 @@ impl MigrationTrait for Migration {
                     .name("idx_roles_level")
                     .table((Alias::new("church"), Roles::Table))
                     .col(Roles::Level)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;

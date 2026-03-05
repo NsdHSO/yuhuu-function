@@ -6,6 +6,7 @@ pub struct Migration;
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
     async fn up(&self, manager: &SchemaManager) -> Result<(), DbErr> {
+        // Build the insert query with ON CONFLICT support
         let insert = Query::insert()
             .into_table((Alias::new("church"), Roles::Table))
             .columns([
@@ -56,6 +57,11 @@ impl MigrationTrait for Migration {
                 5.into(),
                 r#"["all"]"#.into(),
             ])
+            .on_conflict(
+                OnConflict::column(Roles::Name)
+                    .do_nothing()
+                    .to_owned()
+            )
             .to_owned();
 
         manager.exec_stmt(insert).await?;

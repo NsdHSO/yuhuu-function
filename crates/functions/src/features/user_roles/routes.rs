@@ -15,8 +15,7 @@ pub fn configure_user_roles(cfg: &mut web::ServiceConfig) {
                 .route(web::post().to(handlers::assign_my_role)),
         )
         .service(
-            web::resource("/me/roles/{role_id}")
-                .route(web::delete().to(handlers::remove_my_role)),
+            web::resource("/me/roles/{role_id}").route(web::delete().to(handlers::remove_my_role)),
         )
         // Admin endpoints
         .service(

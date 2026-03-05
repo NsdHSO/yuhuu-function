@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::dto::SpiritualMilestoneModel;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct CreateSpiritualMilestoneRequest {

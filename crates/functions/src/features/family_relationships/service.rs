@@ -3,9 +3,7 @@ use models::dto::{FamilyRelationship, FamilyRelationshipActiveModel};
 use models::internal::{
     CreateFamilyRelationshipRequest, FamilyRelationshipResponse, UpdateFamilyRelationshipRequest,
 };
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set,
-};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
 pub struct FamilyRelationshipService;
 
@@ -81,7 +79,10 @@ impl FamilyRelationshipService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Family relationship not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Family relationship not found".to_string(),
+                )
             })?;
 
         Ok(relationship.into())
@@ -100,7 +101,10 @@ impl FamilyRelationshipService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Family relationship not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Family relationship not found".to_string(),
+                )
             })?;
 
         let mut active: FamilyRelationshipActiveModel = existing.into();
@@ -149,7 +153,10 @@ impl FamilyRelationshipService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Family relationship not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Family relationship not found".to_string(),
+                )
             })?;
 
         let active: FamilyRelationshipActiveModel = relationship.into();

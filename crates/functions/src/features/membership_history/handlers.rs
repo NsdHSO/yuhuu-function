@@ -3,8 +3,8 @@ use auth_integration::Subject;
 use http_response::{create_response, HttpCodeW};
 use models::internal::{CreateMembershipHistoryRequest, UpdateMembershipHistoryRequest};
 
-use crate::features::users::service::UserService;
 use super::service::MembershipHistoryService;
+use crate::features::users::service::UserService;
 
 pub async fn create_membership(
     db: web::Data<sea_orm::DatabaseConnection>,

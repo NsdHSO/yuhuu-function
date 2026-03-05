@@ -1,8 +1,6 @@
 use actix_web::{web, HttpResponse, Result};
-use models::internal::{
-    AddParticipantRequest, CreateDinnerRequest,
-};
 use http_response::{create_response, HttpCodeW};
+use models::internal::{AddParticipantRequest, CreateDinnerRequest};
 
 use super::service::DinnerService;
 
@@ -28,7 +26,9 @@ pub async fn list_dinners(
     db: web::Data<sea_orm::DatabaseConnection>,
     query: web::Query<ListDinnersQuery>,
 ) -> Result<HttpResponse> {
-    let result = DinnerService::list_dinners(&db, query.page, query.limit, query.dinner_date.clone()).await?;
+    let result =
+        DinnerService::list_dinners(&db, query.page, query.limit, query.dinner_date.clone())
+            .await?;
     let resp = create_response(result, HttpCodeW::OK);
     Ok(HttpResponse::Ok().json(resp))
 }
@@ -38,7 +38,8 @@ pub async fn add_participant(
     dinner_id: web::Path<i64>,
     req: web::Json<AddParticipantRequest>,
 ) -> Result<HttpResponse> {
-    let participant = DinnerService::add_participant(&db, dinner_id.into_inner(), req.into_inner(), None).await?;
+    let participant =
+        DinnerService::add_participant(&db, dinner_id.into_inner(), req.into_inner(), None).await?;
     let resp = create_response(participant, HttpCodeW::Created);
     Ok(HttpResponse::Created().json(resp))
 }
@@ -58,7 +59,10 @@ pub async fn remove_participant(
 ) -> Result<HttpResponse> {
     let (dinner_id, participant_id) = path.into_inner();
     DinnerService::remove_participant(&db, dinner_id, participant_id).await?;
-    let resp = create_response(serde_json::json!({ "message": "Participant removed" }), HttpCodeW::OK);
+    let resp = create_response(
+        serde_json::json!({ "message": "Participant removed" }),
+        HttpCodeW::OK,
+    );
     Ok(HttpResponse::Ok().json(resp))
 }
 

@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::dto::MembershipHistoryModel;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct CreateMembershipHistoryRequest {

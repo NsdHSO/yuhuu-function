@@ -3,9 +3,7 @@ use models::dto::{MembershipHistory, MembershipHistoryActiveModel};
 use models::internal::{
     CreateMembershipHistoryRequest, MembershipHistoryResponse, UpdateMembershipHistoryRequest,
 };
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set,
-};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
 pub struct MembershipHistoryService;
 
@@ -97,7 +95,10 @@ impl MembershipHistoryService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Membership history not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Membership history not found".to_string(),
+                )
             })?;
 
         Ok(membership.into())
@@ -116,7 +117,10 @@ impl MembershipHistoryService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Membership history not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Membership history not found".to_string(),
+                )
             })?;
 
         let mut active: MembershipHistoryActiveModel = existing.into();
@@ -183,7 +187,10 @@ impl MembershipHistoryService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Membership history not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Membership history not found".to_string(),
+                )
             })?;
 
         let active: MembershipHistoryActiveModel = membership.into();

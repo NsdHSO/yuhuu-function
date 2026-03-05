@@ -3,8 +3,8 @@ use auth_integration::Subject;
 use http_response::{create_response, HttpCodeW};
 use models::internal::{CreateFamilyRelationshipRequest, UpdateFamilyRelationshipRequest};
 
-use crate::features::users::service::UserService;
 use super::service::FamilyRelationshipService;
+use crate::features::users::service::UserService;
 
 pub async fn create_family_relationship(
     db: web::Data<sea_orm::DatabaseConnection>,
@@ -13,8 +13,7 @@ pub async fn create_family_relationship(
 ) -> Result<HttpResponse> {
     let user = UserService::get_user_by_auth_id(&db, &subject.sub).await?;
 
-    let relationship =
-        FamilyRelationshipService::create(&db, user.id, body.into_inner()).await?;
+    let relationship = FamilyRelationshipService::create(&db, user.id, body.into_inner()).await?;
 
     let response = create_response(relationship, HttpCodeW::Created);
     Ok(HttpResponse::Created().json(response))

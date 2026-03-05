@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
-use models::internal::ListUsersQuery;
 use http_response::{create_response, HttpCodeW};
+use models::internal::ListUsersQuery;
 
 use super::service::UserService;
 

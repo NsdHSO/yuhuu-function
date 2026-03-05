@@ -2,8 +2,8 @@ use chrono::NaiveDate;
 use http_response::{CustomError, HttpCodeW};
 use models::dto::{user_profile, UserProfile};
 use models::internal::{CreateProfileRequest, ProfileResponse, UpdateProfileRequest};
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use sea_orm::ActiveValue::NotSet;
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 use user_profile::Column::UserId;
 use user_profile::Model;
 

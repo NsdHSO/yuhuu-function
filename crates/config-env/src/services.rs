@@ -126,7 +126,7 @@ impl ConfigService {
             "SQLX_LOG",
             "SSL_CERT_DAYS",
             "STRAPI_API",
-            "MODE"
+            "MODE",
         ];
 
         let mut out: HashMap<String, String> = HashMap::new();

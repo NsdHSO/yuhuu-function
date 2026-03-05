@@ -97,7 +97,12 @@ impl UserService {
             .filter(Column::AuthUserId.eq(auth_user_id))
             .one(db)
             .await?
-            .ok_or_else(|| CustomError::new(HttpCodeW::NotFound, "User not linked in church system".to_string()))?;
+            .ok_or_else(|| {
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "User not linked in church system".to_string(),
+                )
+            })?;
 
         Ok(UserResponse {
             id: user.id,

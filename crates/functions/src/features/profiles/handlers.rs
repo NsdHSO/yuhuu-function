@@ -1,9 +1,9 @@
 use super::service::ProfileService;
+use crate::features::users::service::UserService;
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
-use models::internal::{CreateProfileRequest, UpdateProfileRequest};
-use crate::features::users::service::UserService;
 use http_response::{create_response, HttpCodeW};
+use models::internal::{CreateProfileRequest, UpdateProfileRequest};
 
 /// POST /v1/users/:id/profile
 /// Create user profile

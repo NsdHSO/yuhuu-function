@@ -1,6 +1,6 @@
 use actix_web::{HttpResponse, Result};
-use serde_json::json;
 use http_response::{create_response, HttpCodeW};
+use serde_json::json;
 
 /// GET /health
 /// Health check endpoint (no authentication required)

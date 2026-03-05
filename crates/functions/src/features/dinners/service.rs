@@ -1,5 +1,5 @@
 use http_response::{CustomError, HttpCodeW};
-use models::dto::{DinnerActiveModel, DinnerParticipantActiveModel, Dinner, DinnerParticipant};
+use models::dto::{Dinner, DinnerActiveModel, DinnerParticipant, DinnerParticipantActiveModel};
 use models::internal::{
     AddParticipantRequest, CreateDinnerRequest, DinnerResponse, DinnerWithParticipantsResponse,
     ParticipantResponse,
@@ -19,7 +19,12 @@ impl DinnerService {
         recorded_by: Option<i64>,
     ) -> Result<DinnerResponse, CustomError> {
         let dinner_date = chrono::NaiveDate::parse_from_str(&request.dinner_date, "%Y-%m-%d")
-            .map_err(|_| CustomError::new(HttpCodeW::BadRequest, "Invalid date format. Use YYYY-MM-DD".to_string()))?;
+            .map_err(|_| {
+                CustomError::new(
+                    HttpCodeW::BadRequest,
+                    "Invalid date format. Use YYYY-MM-DD".to_string(),
+                )
+            })?;
 
         let now = chrono::Utc::now().naive_utc();
         let uuid = uuid::Uuid::new_v4();
@@ -77,20 +82,28 @@ impl DinnerService {
         dinner_date: Option<String>,
     ) -> Result<serde_json::Value, CustomError> {
         let page = if page < 1 { 1 } else { page };
-        let limit = if (1..=100).contains(&limit) { limit } else { 20 };
+        let limit = if (1..=100).contains(&limit) {
+            limit
+        } else {
+            20
+        };
 
         use models::dto::dinner::Column;
 
         let mut query = Dinner::find().order_by(Column::DinnerDate, sea_orm::Order::Desc);
 
         if let Some(date_str) = dinner_date {
-            let date = chrono::NaiveDate::parse_from_str(&date_str, "%Y-%m-%d")
-                .map_err(|_| CustomError::new(HttpCodeW::BadRequest, "Invalid date format. Use YYYY-MM-DD".to_string()))?;
+            let date = chrono::NaiveDate::parse_from_str(&date_str, "%Y-%m-%d").map_err(|_| {
+                CustomError::new(
+                    HttpCodeW::BadRequest,
+                    "Invalid date format. Use YYYY-MM-DD".to_string(),
+                )
+            })?;
             query = query.filter(Column::DinnerDate.gte(date));
         }
 
         let count_query = query.clone();
-        
+
         let dinners: Vec<DinnerResponse> = query
             .paginate(db, limit as u64)
             .fetch_page((page - 1) as u64)
@@ -214,7 +227,9 @@ impl DinnerService {
         let participant = DinnerParticipant::find_by_id(participant_id)
             .one(db)
             .await?
-            .ok_or_else(|| CustomError::new(HttpCodeW::NotFound, "Participant not found".to_string()))?;
+            .ok_or_else(|| {
+                CustomError::new(HttpCodeW::NotFound, "Participant not found".to_string())
+            })?;
 
         if participant.dinner_id != dinner_id {
             return Err(CustomError::new(

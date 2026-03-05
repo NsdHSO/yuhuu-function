@@ -11,7 +11,10 @@ async fn health_returns_response_object() {
     assert!(resp.status().is_success());
 
     let body: serde_json::Value = test::read_body_json(resp).await;
-    assert!(body.get("message").is_some(), "missing message field: {body:?}");
+    assert!(
+        body.get("message").is_some(),
+        "missing message field: {body:?}"
+    );
     assert!(body.get("code").is_some(), "missing code field: {body:?}");
 }
 

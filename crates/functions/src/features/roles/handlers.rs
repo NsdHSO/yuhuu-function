@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
-use models::internal::{CreateRoleRequest, ListRolesQuery, UpdateRoleRequest};
 use http_response::{create_response, HttpCodeW};
+use models::internal::{CreateRoleRequest, ListRolesQuery, UpdateRoleRequest};
 
 use super::service::RoleService;
 

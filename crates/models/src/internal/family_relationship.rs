@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::dto::FamilyRelationshipModel;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct CreateFamilyRelationshipRequest {

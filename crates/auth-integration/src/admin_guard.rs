@@ -47,7 +47,7 @@ impl FromRequest for AdminGuard {
             Some(subj) => subj.clone(),
             None => {
                 return Box::pin(ready(Err(actix_web::error::ErrorUnauthorized(
-                    "Authentication required"
+                    "Authentication required",
                 ))));
             }
         };
@@ -57,27 +57,25 @@ impl FromRequest for AdminGuard {
             Some(db) => db.clone(),
             None => {
                 return Box::pin(ready(Err(actix_web::error::ErrorInternalServerError(
-                    "Database connection not available"
+                    "Database connection not available",
                 ))));
             }
         };
 
         Box::pin(async move {
             // Import here to avoid circular dependencies
-            use models::dto::{User, UserRole, Role};
+            use models::dto::role::Column as RoleColumn;
             use models::dto::user::Column as UserColumn;
             use models::dto::user_role::Column as UserRoleColumn;
-            use models::dto::role::Column as RoleColumn;
-            use sea_orm::{EntityTrait, QueryFilter, ColumnTrait};
+            use models::dto::{Role, User, UserRole};
+            use sea_orm::{ColumnTrait, EntityTrait, QueryFilter};
 
             // 1. Get church user by auth_user_id
             let church_user = User::find()
                 .filter(UserColumn::AuthUserId.eq(&subject.sub))
                 .one(db.as_ref())
                 .await
-                .map_err(|_| {
-                    actix_web::error::ErrorInternalServerError("Database query failed")
-                })?
+                .map_err(|_| actix_web::error::ErrorInternalServerError("Database query failed"))?
                 .ok_or_else(|| {
                     actix_web::error::ErrorUnauthorized("User not linked to church system")
                 })?;
@@ -87,9 +85,7 @@ impl FromRequest for AdminGuard {
                 .filter(RoleColumn::Name.eq("Admin"))
                 .one(db.as_ref())
                 .await
-                .map_err(|_| {
-                    actix_web::error::ErrorInternalServerError("Database query failed")
-                })?
+                .map_err(|_| actix_web::error::ErrorInternalServerError("Database query failed"))?
                 .ok_or_else(|| {
                     actix_web::error::ErrorInternalServerError("Admin role not configured")
                 })?;
@@ -101,9 +97,7 @@ impl FromRequest for AdminGuard {
                 .filter(UserRoleColumn::IsActive.eq(true))
                 .one(db.as_ref())
                 .await
-                .map_err(|_| {
-                    actix_web::error::ErrorInternalServerError("Database query failed")
-                })?
+                .map_err(|_| actix_web::error::ErrorInternalServerError("Database query failed"))?
                 .is_some();
 
             if !has_admin_role {

@@ -1,11 +1,7 @@
 use http_response::{CustomError, HttpCodeW};
 use models::dto::{UserSkill, UserSkillActiveModel};
-use models::internal::{
-    CreateUserSkillRequest, UpdateUserSkillRequest, UserSkillResponse,
-};
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set,
-};
+use models::internal::{CreateUserSkillRequest, UpdateUserSkillRequest, UserSkillResponse};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
 pub struct UserSkillService;
 
@@ -39,10 +35,13 @@ impl UserSkillService {
         };
 
         let skill = new_skill.insert(db).await.map_err(|e| {
-            if e.to_string().contains("duplicate key") || e.to_string().contains("idx_user_skills_user_skill_unique") {
+            if e.to_string().contains("duplicate key")
+                || e.to_string().contains("idx_user_skills_user_skill_unique")
+            {
                 CustomError::new(
                     HttpCodeW::Conflict,
-                    "You have already added this skill. Please update the existing skill instead.".to_string(),
+                    "You have already added this skill. Please update the existing skill instead."
+                        .to_string(),
                 )
             } else {
                 CustomError::from(e)
@@ -77,9 +76,7 @@ impl UserSkillService {
             .filter(Column::UserId.eq(user_id))
             .one(db)
             .await?
-            .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Skill not found".to_string())
-            })?;
+            .ok_or_else(|| CustomError::new(HttpCodeW::NotFound, "Skill not found".to_string()))?;
 
         Ok(skill.into())
     }
@@ -96,9 +93,7 @@ impl UserSkillService {
             .filter(Column::UserId.eq(user_id))
             .one(db)
             .await?
-            .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Skill not found".to_string())
-            })?;
+            .ok_or_else(|| CustomError::new(HttpCodeW::NotFound, "Skill not found".to_string()))?;
 
         let mut active: UserSkillActiveModel = existing.into();
 
@@ -127,10 +122,13 @@ impl UserSkillService {
         active.updated_at = Set(chrono::Utc::now().naive_utc());
 
         let updated = active.update(db).await.map_err(|e| {
-            if e.to_string().contains("duplicate key") || e.to_string().contains("idx_user_skills_user_skill_unique") {
+            if e.to_string().contains("duplicate key")
+                || e.to_string().contains("idx_user_skills_user_skill_unique")
+            {
                 CustomError::new(
                     HttpCodeW::Conflict,
-                    "You have already added this skill. Please update the existing skill instead.".to_string(),
+                    "You have already added this skill. Please update the existing skill instead."
+                        .to_string(),
                 )
             } else {
                 CustomError::from(e)
@@ -151,9 +149,7 @@ impl UserSkillService {
             .filter(Column::UserId.eq(user_id))
             .one(db)
             .await?
-            .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Skill not found".to_string())
-            })?;
+            .ok_or_else(|| CustomError::new(HttpCodeW::NotFound, "Skill not found".to_string()))?;
 
         let active: UserSkillActiveModel = skill.into();
         active.delete(db).await?;

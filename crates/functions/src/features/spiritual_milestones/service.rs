@@ -3,9 +3,7 @@ use models::dto::{SpiritualMilestone, SpiritualMilestoneActiveModel};
 use models::internal::{
     CreateSpiritualMilestoneRequest, SpiritualMilestoneResponse, UpdateSpiritualMilestoneRequest,
 };
-use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set,
-};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
 pub struct SpiritualMilestoneService;
 
@@ -82,7 +80,10 @@ impl SpiritualMilestoneService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Spiritual milestone not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Spiritual milestone not found".to_string(),
+                )
             })?;
 
         Ok(milestone.into())
@@ -101,7 +102,10 @@ impl SpiritualMilestoneService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Spiritual milestone not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Spiritual milestone not found".to_string(),
+                )
             })?;
 
         let mut active: SpiritualMilestoneActiveModel = existing.into();
@@ -156,7 +160,10 @@ impl SpiritualMilestoneService {
             .one(db)
             .await?
             .ok_or_else(|| {
-                CustomError::new(HttpCodeW::NotFound, "Spiritual milestone not found".to_string())
+                CustomError::new(
+                    HttpCodeW::NotFound,
+                    "Spiritual milestone not found".to_string(),
+                )
             })?;
 
         let active: SpiritualMilestoneActiveModel = milestone.into();

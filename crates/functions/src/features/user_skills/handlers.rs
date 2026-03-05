@@ -3,8 +3,8 @@ use auth_integration::Subject;
 use http_response::{create_response, HttpCodeW};
 use models::internal::{CreateUserSkillRequest, UpdateUserSkillRequest};
 
-use crate::features::users::service::UserService;
 use super::service::UserSkillService;
+use crate::features::users::service::UserService;
 
 pub async fn create_skill(
     db: web::Data<sea_orm::DatabaseConnection>,
@@ -54,8 +54,7 @@ pub async fn update_skill(
     let user = UserService::get_user_by_auth_id(&db, &subject.sub).await?;
     let skill_id = path.into_inner();
 
-    let skill =
-        UserSkillService::update(&db, user.id, skill_id, body.into_inner()).await?;
+    let skill = UserSkillService::update(&db, user.id, skill_id, body.into_inner()).await?;
 
     let response = create_response(skill, HttpCodeW::OK);
     Ok(HttpResponse::Ok().json(response))

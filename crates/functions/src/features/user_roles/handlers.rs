@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::Subject;
-use models::internal::AssignRoleRequest;
 use http_response::{create_response, HttpCodeW};
+use models::internal::AssignRoleRequest;
 
 use super::service::UserRoleService;
 use crate::features::users::service::UserService;

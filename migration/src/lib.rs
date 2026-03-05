@@ -51,5 +51,4 @@ impl MigratorTrait for Migrator {
             Box::new(m20260203_000021_alter_user_profiles_add_education_fields::Migration),
         ]
     }
-
 }

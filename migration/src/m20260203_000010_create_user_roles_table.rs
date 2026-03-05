@@ -89,6 +89,7 @@ impl MigrationTrait for Migration {
                     .col(UserRoles::UserId)
                     .col(UserRoles::RoleId)
                     .unique()
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;

@@ -9,5 +9,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 reqwest = { workspace = true }
 futures-util = { workspace = true }
+sea-orm = { workspace = true }
 
 http-response = { path = "../http-response" }
+models = { path = "../models" }

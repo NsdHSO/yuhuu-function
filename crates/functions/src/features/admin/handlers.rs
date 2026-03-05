@@ -1,7 +1,12 @@
 use actix_web::{web, HttpResponse, Result};
 use auth_integration::AdminGuard;
 use http_response::{create_response, HttpCodeW};
-use models::internal::SearchUsersQuery;
+use models::internal::{
+    CreateFamilyRelationshipRequest, CreateMembershipHistoryRequest,
+    CreateSpiritualMilestoneRequest, CreateUserSkillRequest, SearchUsersQuery,
+    UpdateFamilyRelationshipRequest, UpdateMembershipHistoryRequest,
+    UpdateSpiritualMilestoneRequest, UpdateUserSkillRequest,
+};
 
 use super::super::family_relationships::service::FamilyRelationshipService;
 use super::super::membership_history::service::MembershipHistoryService;
@@ -143,5 +148,294 @@ pub async fn get_user_membership_history(
     let results = MembershipHistoryService::list_by_user(&db, user_id.into_inner()).await?;
 
     let resp = create_response(results, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+// ============================================================================
+// FAMILY RELATIONSHIPS - ADMIN CRUD
+// ============================================================================
+
+/// Create family relationship for a user (admin-only)
+///
+/// # Endpoint
+/// POST /v1/admin/users/{user_id}/family
+pub async fn create_user_family(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    user_id: web::Path<i64>,
+    request: web::Json<CreateFamilyRelationshipRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let result =
+        FamilyRelationshipService::create(&db, user_id.into_inner(), request.into_inner()).await?;
+
+    let resp = create_response(result, HttpCodeW::Created);
+    Ok(HttpResponse::Created().json(resp))
+}
+
+/// Get specific family relationship (admin-only)
+///
+/// # Endpoint
+/// GET /v1/admin/users/{user_id}/family/{id}
+pub async fn get_user_family_by_id(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, relationship_id) = path.into_inner();
+    let result = FamilyRelationshipService::get_by_id(&db, user_id, relationship_id).await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Update family relationship (admin-only)
+///
+/// # Endpoint
+/// PUT /v1/admin/users/{user_id}/family/{id}
+pub async fn update_user_family(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    request: web::Json<UpdateFamilyRelationshipRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, relationship_id) = path.into_inner();
+    let result = FamilyRelationshipService::update(
+        &db,
+        user_id,
+        relationship_id,
+        request.into_inner(),
+    )
+    .await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Delete family relationship (admin-only)
+///
+/// # Endpoint
+/// DELETE /v1/admin/users/{user_id}/family/{id}
+pub async fn delete_user_family(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, relationship_id) = path.into_inner();
+    FamilyRelationshipService::delete(&db, user_id, relationship_id).await?;
+
+    let resp = create_response("Family relationship deleted successfully", HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+// ============================================================================
+// SPIRITUAL MILESTONES - ADMIN CRUD
+// ============================================================================
+
+/// Create spiritual milestone for a user (admin-only)
+///
+/// # Endpoint
+/// POST /v1/admin/users/{user_id}/milestones
+pub async fn create_user_milestone(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    user_id: web::Path<i64>,
+    request: web::Json<CreateSpiritualMilestoneRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let result =
+        SpiritualMilestoneService::create(&db, user_id.into_inner(), request.into_inner()).await?;
+
+    let resp = create_response(result, HttpCodeW::Created);
+    Ok(HttpResponse::Created().json(resp))
+}
+
+/// Get specific spiritual milestone (admin-only)
+///
+/// # Endpoint
+/// GET /v1/admin/users/{user_id}/milestones/{id}
+pub async fn get_user_milestone_by_id(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, milestone_id) = path.into_inner();
+    let result = SpiritualMilestoneService::get_by_id(&db, user_id, milestone_id).await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Update spiritual milestone (admin-only)
+///
+/// # Endpoint
+/// PUT /v1/admin/users/{user_id}/milestones/{id}
+pub async fn update_user_milestone(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    request: web::Json<UpdateSpiritualMilestoneRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, milestone_id) = path.into_inner();
+    let result =
+        SpiritualMilestoneService::update(&db, user_id, milestone_id, request.into_inner())
+            .await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Delete spiritual milestone (admin-only)
+///
+/// # Endpoint
+/// DELETE /v1/admin/users/{user_id}/milestones/{id}
+pub async fn delete_user_milestone(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, milestone_id) = path.into_inner();
+    SpiritualMilestoneService::delete(&db, user_id, milestone_id).await?;
+
+    let resp = create_response("Spiritual milestone deleted successfully", HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+// ============================================================================
+// MEMBERSHIP HISTORY - ADMIN CRUD
+// ============================================================================
+
+/// Create membership history entry for a user (admin-only)
+///
+/// # Endpoint
+/// POST /v1/admin/users/{user_id}/membership-history
+pub async fn create_user_membership_history(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    user_id: web::Path<i64>,
+    request: web::Json<CreateMembershipHistoryRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let result =
+        MembershipHistoryService::create(&db, user_id.into_inner(), request.into_inner()).await?;
+
+    let resp = create_response(result, HttpCodeW::Created);
+    Ok(HttpResponse::Created().json(resp))
+}
+
+/// Get specific membership history entry (admin-only)
+///
+/// # Endpoint
+/// GET /v1/admin/users/{user_id}/membership-history/{id}
+pub async fn get_user_membership_history_by_id(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, history_id) = path.into_inner();
+    let result = MembershipHistoryService::get_by_id(&db, user_id, history_id).await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Update membership history entry (admin-only)
+///
+/// # Endpoint
+/// PUT /v1/admin/users/{user_id}/membership-history/{id}
+pub async fn update_user_membership_history(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    request: web::Json<UpdateMembershipHistoryRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, history_id) = path.into_inner();
+    let result =
+        MembershipHistoryService::update(&db, user_id, history_id, request.into_inner()).await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Delete membership history entry (admin-only)
+///
+/// # Endpoint
+/// DELETE /v1/admin/users/{user_id}/membership-history/{id}
+pub async fn delete_user_membership_history(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, history_id) = path.into_inner();
+    MembershipHistoryService::delete(&db, user_id, history_id).await?;
+
+    let resp = create_response("Membership history entry deleted successfully", HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+// ============================================================================
+// USER SKILLS - ADMIN CRUD
+// ============================================================================
+
+/// Create skill for a user (admin-only)
+///
+/// # Endpoint
+/// POST /v1/admin/users/{user_id}/skills
+pub async fn create_user_skill(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    user_id: web::Path<i64>,
+    request: web::Json<CreateUserSkillRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let result =
+        UserSkillService::create(&db, user_id.into_inner(), request.into_inner()).await?;
+
+    let resp = create_response(result, HttpCodeW::Created);
+    Ok(HttpResponse::Created().json(resp))
+}
+
+/// Get specific skill (admin-only)
+///
+/// # Endpoint
+/// GET /v1/admin/users/{user_id}/skills/{id}
+pub async fn get_user_skill_by_id(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, skill_id) = path.into_inner();
+    let result = UserSkillService::get_by_id(&db, user_id, skill_id).await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Update skill (admin-only)
+///
+/// # Endpoint
+/// PUT /v1/admin/users/{user_id}/skills/{id}
+pub async fn update_user_skill(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    request: web::Json<UpdateUserSkillRequest>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, skill_id) = path.into_inner();
+    let result = UserSkillService::update(&db, user_id, skill_id, request.into_inner()).await?;
+
+    let resp = create_response(result, HttpCodeW::OK);
+    Ok(HttpResponse::Ok().json(resp))
+}
+
+/// Delete skill (admin-only)
+///
+/// # Endpoint
+/// DELETE /v1/admin/users/{user_id}/skills/{id}
+pub async fn delete_user_skill(
+    db: web::Data<sea_orm::DatabaseConnection>,
+    path: web::Path<(i64, i64)>,
+    _admin: AdminGuard,
+) -> Result<HttpResponse> {
+    let (user_id, skill_id) = path.into_inner();
+    UserSkillService::delete(&db, user_id, skill_id).await?;
+
+    let resp = create_response("Skill deleted successfully", HttpCodeW::OK);
     Ok(HttpResponse::Ok().json(resp))
 }

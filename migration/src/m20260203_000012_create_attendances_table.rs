@@ -93,6 +93,7 @@ impl MigrationTrait for Migration {
                     .table((Alias::new("church"), Attendances::Table))
                     .col(Attendances::AttendanceDate)
                     .col(Attendances::ServiceType)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;

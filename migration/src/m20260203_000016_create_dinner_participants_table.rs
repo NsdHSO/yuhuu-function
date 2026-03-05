@@ -40,10 +40,7 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(DinnerParticipants::Notes).text())
-                    .col(
-                        ColumnDef::new(DinnerParticipants::RecordedBy)
-                            .big_integer(),
-                    )
+                    .col(ColumnDef::new(DinnerParticipants::RecordedBy).big_integer())
                     .col(
                         ColumnDef::new(DinnerParticipants::CreatedAt)
                             .timestamp()

@@ -28,26 +28,11 @@ impl MigrationTrait for Migration {
                             .big_integer()
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(FamilyRelationships::RelatedUserId)
-                            .big_integer(),
-                    )
-                    .col(
-                        ColumnDef::new(FamilyRelationships::RelatedPersonName)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(FamilyRelationships::RelatedPersonDob)
-                            .date(),
-                    )
-                    .col(
-                        ColumnDef::new(FamilyRelationships::RelatedPersonPhone)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(FamilyRelationships::RelatedPersonEmail)
-                            .string(),
-                    )
+                    .col(ColumnDef::new(FamilyRelationships::RelatedUserId).big_integer())
+                    .col(ColumnDef::new(FamilyRelationships::RelatedPersonName).string())
+                    .col(ColumnDef::new(FamilyRelationships::RelatedPersonDob).date())
+                    .col(ColumnDef::new(FamilyRelationships::RelatedPersonPhone).string())
+                    .col(ColumnDef::new(FamilyRelationships::RelatedPersonEmail).string())
                     .col(
                         ColumnDef::new(FamilyRelationships::RelationshipType)
                             .string()

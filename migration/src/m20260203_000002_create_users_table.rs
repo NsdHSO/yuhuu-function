@@ -47,6 +47,7 @@ impl MigrationTrait for Migration {
                     .name("idx_users_auth_user_id")
                     .table((Alias::new("church"), Users::Table))
                     .col(Users::AuthUserId)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;

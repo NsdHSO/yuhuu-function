@@ -33,30 +33,12 @@ impl MigrationTrait for Migration {
                             .string()
                             .not_null(),
                     )
-                    .col(
-                        ColumnDef::new(MembershipHistory::StartDate)
-                            .date(),
-                    )
-                    .col(
-                        ColumnDef::new(MembershipHistory::EndDate)
-                            .date(),
-                    )
-                    .col(
-                        ColumnDef::new(MembershipHistory::TransferType)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(MembershipHistory::PreviousRole)
-                            .string(),
-                    )
-                    .col(
-                        ColumnDef::new(MembershipHistory::TransferLetterReceived)
-                            .boolean(),
-                    )
-                    .col(
-                        ColumnDef::new(MembershipHistory::Notes)
-                            .text(),
-                    )
+                    .col(ColumnDef::new(MembershipHistory::StartDate).date())
+                    .col(ColumnDef::new(MembershipHistory::EndDate).date())
+                    .col(ColumnDef::new(MembershipHistory::TransferType).string())
+                    .col(ColumnDef::new(MembershipHistory::PreviousRole).string())
+                    .col(ColumnDef::new(MembershipHistory::TransferLetterReceived).boolean())
+                    .col(ColumnDef::new(MembershipHistory::Notes).text())
                     .col(
                         ColumnDef::new(MembershipHistory::CreatedAt)
                             .timestamp()
@@ -104,7 +86,7 @@ impl MigrationTrait for Migration {
             .execute_unprepared(
                 "CREATE UNIQUE INDEX idx_membership_history_active_unique \
                  ON church.membership_history (user_id) \
-                 WHERE end_date IS NULL"
+                 WHERE end_date IS NULL",
             )
             .await?;
 

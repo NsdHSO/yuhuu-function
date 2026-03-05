@@ -1,3 +1,4 @@
+pub mod admin;
 pub mod bootstrap;
 pub mod dinners;
 pub mod family_relationships;
@@ -10,6 +11,7 @@ pub mod user_roles;
 pub mod user_skills;
 pub mod users;
 
+pub use admin::configure_admin;
 pub use bootstrap::configure_bootstrap;
 pub use dinners::configure_dinners;
 pub use family_relationships::configure_family_relationships;

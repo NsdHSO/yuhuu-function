@@ -69,6 +69,7 @@ impl MigrationTrait for Migration {
                     .table((Alias::new("church"), Dinners::Table))
                     .col(Dinners::DinnerDate)
                     .col(Dinners::MealType)
+                    .if_not_exists()
                     .to_owned(),
             )
             .await?;

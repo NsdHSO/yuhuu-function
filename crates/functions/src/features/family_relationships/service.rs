@@ -5,9 +5,80 @@ use models::internal::{
 };
 use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
 
+use crate::features::profiles::service::ProfileService;
+
 pub struct FamilyRelationshipService;
 
 impl FamilyRelationshipService {
+    /// Validate spouse relationship constraints
+    async fn validate_spouse_relationship(
+        db: &DatabaseConnection,
+        user_id: i64,
+        related_user_id: Option<i64>,
+        exclude_relationship_id: Option<i64>,
+    ) -> Result<(), CustomError> {
+        use models::dto::family_relationship::Column as FRColumn;
+
+        // Check if user already has a spouse
+        let mut query = FamilyRelationship::find()
+            .filter(FRColumn::UserId.eq(user_id))
+            .filter(FRColumn::RelationshipType.eq("spouse"));
+
+        if let Some(exclude_id) = exclude_relationship_id {
+            query = query.filter(FRColumn::Id.ne(exclude_id));
+        }
+
+        let existing_spouse = query.one(db).await?;
+
+        if existing_spouse.is_some() {
+            return Err(CustomError::new(
+                HttpCodeW::BadRequest,
+                "User already has a spouse relationship".to_string(),
+            ));
+        }
+
+        // If related_user_id provided, validate gender compatibility
+        if let Some(related_id) = related_user_id {
+            Self::validate_gender_compatibility(db, user_id, related_id).await?;
+        }
+
+        Ok(())
+    }
+
+    /// Validate gender compatibility for spouse relationship
+    async fn validate_gender_compatibility(
+        db: &DatabaseConnection,
+        user_id: i64,
+        related_user_id: i64,
+    ) -> Result<(), CustomError> {
+        // Get user's gender via ProfileService
+        let user_gender = ProfileService::get_user_gender(db, user_id)
+            .await?
+            .map(|g| g.to_lowercase());
+
+        // Get related user's gender via ProfileService
+        let related_gender = ProfileService::get_user_gender(db, related_user_id)
+            .await?
+            .map(|g| g.to_lowercase());
+
+        // Validate genders are different
+        match (user_gender.as_deref(), related_gender.as_deref()) {
+            (Some("male"), Some("male")) => Err(CustomError::new(
+                HttpCodeW::BadRequest,
+                "Cannot add male spouse to male user".to_string(),
+            )),
+            (Some("female"), Some("female")) => Err(CustomError::new(
+                HttpCodeW::BadRequest,
+                "Cannot add female spouse to female user".to_string(),
+            )),
+            (None, _) | (_, None) => Err(CustomError::new(
+                HttpCodeW::BadRequest,
+                "User gender information required for spouse relationship".to_string(),
+            )),
+            _ => Ok(()), // Different genders, valid
+        }
+    }
+
     pub async fn create(
         db: &DatabaseConnection,
         user_id: i64,
@@ -18,6 +89,11 @@ impl FamilyRelationshipService {
                 HttpCodeW::BadRequest,
                 "Either related_user_id or related_person_name must be provided".to_string(),
             ));
+        }
+
+        // Validate spouse relationship constraints
+        if request.relationship_type.to_lowercase() == "spouse" {
+            Self::validate_spouse_relationship(db, user_id, request.related_user_id, None).await?;
         }
 
         let related_person_dob = if let Some(dob_str) = request.related_person_dob {
@@ -94,10 +170,10 @@ impl FamilyRelationshipService {
         relationship_id: i64,
         request: UpdateFamilyRelationshipRequest,
     ) -> Result<FamilyRelationshipResponse, CustomError> {
-        use models::dto::family_relationship::Column;
+        use models::dto::family_relationship::Column as FRColumn;
 
         let existing = FamilyRelationship::find_by_id(relationship_id)
-            .filter(Column::UserId.eq(user_id))
+            .filter(FRColumn::UserId.eq(user_id))
             .one(db)
             .await?
             .ok_or_else(|| {
@@ -106,6 +182,17 @@ impl FamilyRelationshipService {
                     "Family relationship not found".to_string(),
                 )
             })?;
+
+        // Validate if changing to spouse
+        if let Some(ref new_relationship_type) = request.relationship_type {
+            if new_relationship_type.to_lowercase() == "spouse"
+                && existing.relationship_type.to_lowercase() != "spouse"
+            {
+                let related_id = request.related_user_id.or(existing.related_user_id);
+                Self::validate_spouse_relationship(db, user_id, related_id, Some(relationship_id))
+                    .await?;
+            }
+        }
 
         let mut active: FamilyRelationshipActiveModel = existing.into();
 

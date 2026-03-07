@@ -157,6 +157,15 @@ impl ProfileService {
         Ok(profile.into())
     }
 
+    /// Get user gender from profile
+    pub async fn get_user_gender(
+        db: &DatabaseConnection,
+        user_id: i64,
+    ) -> Result<Option<String>, CustomError> {
+        let profile = Self::find_profile_by_user(db, user_id).await?;
+        Ok(profile.gender)
+    }
+
     /// Parse date string to NaiveDate
     fn parse_date(date_str: &Option<String>) -> Result<Option<NaiveDate>, CustomError> {
         match date_str {

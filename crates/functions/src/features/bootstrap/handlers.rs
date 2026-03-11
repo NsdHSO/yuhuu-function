@@ -28,16 +28,13 @@ pub async fn bootstrap(
         Ok(p) => Some(p),
         Err(err) if matches!(err.error_status_code, HttpCodeW::NotFound) => {
             // missing
-            if let Some(req) = &body {
+            if let Some(web::Json(req)) = &body {
                 if req.create_profile_if_missing {
-                    if let Some(payload) = req.profile.as_ref() {
-                        let created_profile =
-                            ProfileService::create_profile(&db, user.id, payload.clone()).await?;
-                        created.profile = true;
-                        Some(created_profile)
-                    } else {
-                        None
-                    }
+                    let payload = req.profile.as_ref().cloned().unwrap_or_default();
+                    let created_profile =
+                        ProfileService::create_profile(&db, user.id, payload).await?;
+                    created.profile = true;
+                    Some(created_profile)
                 } else {
                     None
                 }

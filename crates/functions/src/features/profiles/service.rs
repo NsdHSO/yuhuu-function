@@ -166,6 +166,30 @@ impl ProfileService {
         Ok(profile.gender)
     }
 
+    /// Update marital status and optionally gender (used by spouse relationship logic)
+    pub async fn update_marital_and_gender(
+        db: &DatabaseConnection,
+        user_id: i64,
+        marital_status: Option<String>,
+        gender: Option<String>,
+    ) -> Result<(), CustomError> {
+        let existing_profile = Self::find_profile_by_user(db, user_id).await?;
+        let mut active_profile: user_profile::ActiveModel = existing_profile.into();
+
+        if let Some(status) = marital_status {
+            active_profile.marital_status = Set(Some(status));
+        }
+
+        if let Some(g) = gender {
+            active_profile.gender = Set(Some(g));
+        }
+
+        active_profile.updated_at = Set(chrono::Utc::now().naive_utc());
+        active_profile.update(db).await?;
+
+        Ok(())
+    }
+
     /// Parse date string to NaiveDate
     fn parse_date(date_str: &Option<String>) -> Result<Option<NaiveDate>, CustomError> {
         match date_str {

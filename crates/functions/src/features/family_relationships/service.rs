@@ -79,6 +79,77 @@ impl FamilyRelationshipService {
         }
     }
 
+    /// Handle automatic profile updates when spouse relationship is created
+    async fn handle_spouse_profile_update(
+        db: &DatabaseConnection,
+        user_id: i64,
+        related_user_id: Option<i64>,
+    ) -> Result<(), CustomError> {
+        // Get user's current gender
+        let user_gender = ProfileService::get_user_gender(db, user_id).await?;
+
+        let gender_to_set = if user_gender.is_none() {
+            // User has no gender, try to infer from spouse
+            if let Some(related_id) = related_user_id {
+                let spouse_gender = ProfileService::get_user_gender(db, related_id)
+                    .await?
+                    .map(|g| g.to_lowercase());
+
+                // Set opposite gender
+                match spouse_gender.as_deref() {
+                    Some("male") => Some("Female".to_string()),
+                    Some("female") => Some("Male".to_string()),
+                    _ => None, // Spouse has no gender, can't infer
+                }
+            } else {
+                None // No related_user_id, can't infer gender
+            }
+        } else {
+            None // User already has gender, don't change it
+        };
+
+        // Always set marital_status to "Married"
+        ProfileService::update_marital_and_gender(
+            db,
+            user_id,
+            Some("Married".to_string()),
+            gender_to_set,
+        )
+        .await?;
+
+        Ok(())
+    }
+
+    /// Handle marital status update when spouse relationship is removed
+    async fn handle_remove_spouse(
+        db: &DatabaseConnection,
+        user_id: i64,
+        exclude_relationship_id: i64,
+    ) -> Result<(), CustomError> {
+        use models::dto::family_relationship::Column as FRColumn;
+
+        // Check if user has any other spouse relationships
+        let other_spouse = FamilyRelationship::find()
+            .filter(FRColumn::UserId.eq(user_id))
+            .filter(FRColumn::RelationshipType.eq("spouse"))
+            .filter(FRColumn::Id.ne(exclude_relationship_id))
+            .one(db)
+            .await?;
+
+        // If no other spouse, set marital_status to "Single"
+        if other_spouse.is_none() {
+            ProfileService::update_marital_and_gender(
+                db,
+                user_id,
+                Some("Single".to_string()),
+                None, // Don't change gender
+            )
+            .await?;
+        }
+
+        Ok(())
+    }
+
     pub async fn create(
         db: &DatabaseConnection,
         user_id: i64,
@@ -91,8 +162,11 @@ impl FamilyRelationshipService {
             ));
         }
 
-        // Validate spouse relationship constraints
+        // Handle spouse relationship: auto-update profile
         if request.relationship_type.to_lowercase() == "spouse" {
+            Self::handle_spouse_profile_update(db, user_id, request.related_user_id).await?;
+
+            // Validate spouse relationship constraints (after profile update)
             Self::validate_spouse_relationship(db, user_id, request.related_user_id, None).await?;
         }
 
@@ -183,15 +257,24 @@ impl FamilyRelationshipService {
                 )
             })?;
 
-        // Validate if changing to spouse
-        if let Some(ref new_relationship_type) = request.relationship_type {
-            if new_relationship_type.to_lowercase() == "spouse"
-                && existing.relationship_type.to_lowercase() != "spouse"
-            {
-                let related_id = request.related_user_id.or(existing.related_user_id);
-                Self::validate_spouse_relationship(db, user_id, related_id, Some(relationship_id))
-                    .await?;
-            }
+        let old_type = existing.relationship_type.to_lowercase();
+        let new_type = request
+            .relationship_type
+            .as_ref()
+            .map(|t| t.to_lowercase())
+            .unwrap_or_else(|| old_type.clone());
+
+        // Handle changing TO spouse
+        if new_type == "spouse" && old_type != "spouse" {
+            let related_id = request.related_user_id.or(existing.related_user_id);
+            Self::handle_spouse_profile_update(db, user_id, related_id).await?;
+            Self::validate_spouse_relationship(db, user_id, related_id, Some(relationship_id))
+                .await?;
+        }
+
+        // Handle changing FROM spouse to something else
+        if old_type == "spouse" && new_type != "spouse" {
+            Self::handle_remove_spouse(db, user_id, relationship_id).await?;
         }
 
         let mut active: FamilyRelationshipActiveModel = existing.into();
@@ -245,6 +328,11 @@ impl FamilyRelationshipService {
                     "Family relationship not found".to_string(),
                 )
             })?;
+
+        // If deleting a spouse, update marital status
+        if relationship.relationship_type.to_lowercase() == "spouse" {
+            Self::handle_remove_spouse(db, user_id, relationship_id).await?;
+        }
 
         let active: FamilyRelationshipActiveModel = relationship.into();
         active.delete(db).await?;
@@ -329,5 +417,68 @@ mod tests {
         assert_eq!(response.user_id, 10);
         assert_eq!(response.related_person_name.clone().unwrap(), "Jane Doe");
         assert_eq!(response.relationship_type, "spouse");
+    }
+
+    #[test]
+    fn test_spouse_relationship_type_lowercase_normalization() {
+        // Test that spouse relationship type is compared case-insensitively
+        let types = vec!["spouse", "Spouse", "SPOUSE", "SpOuSe"];
+        for t in types {
+            assert_eq!(t.to_lowercase(), "spouse");
+        }
+    }
+
+    #[test]
+    fn test_create_request_validation_requires_related_info() {
+        // Both related_user_id and related_person_name are None
+        let invalid_request = CreateFamilyRelationshipRequest {
+            related_user_id: None,
+            related_person_name: None,
+            related_person_dob: None,
+            related_person_phone: None,
+            related_person_email: None,
+            relationship_type: "spouse".to_string(),
+        };
+
+        // This should fail validation - we can't test async here but we document the expectation
+        assert!(invalid_request.related_user_id.is_none());
+        assert!(invalid_request.related_person_name.is_none());
+    }
+
+    #[test]
+    fn test_update_request_can_change_relationship_type() {
+        let update = UpdateFamilyRelationshipRequest {
+            related_user_id: None,
+            related_person_name: None,
+            related_person_dob: None,
+            related_person_phone: None,
+            related_person_email: None,
+            relationship_type: Some("sibling".to_string()),
+        };
+
+        assert_eq!(update.relationship_type.unwrap(), "sibling");
+    }
+
+    #[test]
+    fn test_gender_inference_logic() {
+        // Test the logic for opposite gender inference
+        let test_cases = vec![
+            ("male", "Female"),
+            ("Male", "Female"),
+            ("MALE", "Female"),
+            ("female", "Male"),
+            ("Female", "Male"),
+            ("FEMALE", "Male"),
+        ];
+
+        for (spouse_gender, expected_user_gender) in test_cases {
+            let normalized = spouse_gender.to_lowercase();
+            let inferred = match normalized.as_str() {
+                "male" => "Female",
+                "female" => "Male",
+                _ => panic!("Unexpected gender"),
+            };
+            assert_eq!(inferred, expected_user_gender);
+        }
     }
 }

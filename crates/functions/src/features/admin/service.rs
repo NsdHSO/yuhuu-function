@@ -1,58 +1,75 @@
-use http_response::{CustomError, HttpCodeW};
-use models::dto::{user_profile, UserProfile};
-use models::internal::UserSearchResult;
-use sea_orm::{ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder, QuerySelect};
+use http_response::CustomError;
+use models::internal::{
+    AssignmentListQuery, CreateVisitAssignmentRequest, CreateVisitableFamilyRequest,
+    FamilyListQuery, UpdateVisitableFamilyRequest, UserSearchResult, VisitAssignmentResponse,
+    VisitableFamilyResponse,
+};
+use sea_orm::DatabaseConnection;
+
+use crate::features::profiles::service::ProfileService;
+use crate::features::visits::services::{VisitAssignmentService, VisitableFamilyService};
 
 pub struct AdminService;
 
 impl AdminService {
-    /// Search users by middle name with partial matching
-    ///
-    /// # Arguments
-    /// * `db` - Database connection
-    /// * `search_term` - Search term for middle_name (min 2 chars)
-    ///
-    /// # Returns
-    /// * `Ok(Vec<UserSearchResult>)` - List of matching user profiles (max 50 results)
-    /// * `Err(CustomError)` - If search term is invalid
-    ///
-    /// # Validation
-    /// - Search term must be at least 2 characters after trimming
-    ///
-    /// # Query
-    /// ```sql
-    /// SELECT id, user_id, middle_name, phone, profile_picture_url
-    /// FROM church.user_profiles
-    /// WHERE middle_name ILIKE '%search_term%'
-    /// ORDER BY middle_name ASC
-    /// LIMIT 50;
-    /// ```
     pub async fn search_users_by_name(
         db: &DatabaseConnection,
         search_term: &str,
     ) -> Result<Vec<UserSearchResult>, CustomError> {
-        // Validation: trim and check minimum length
-        let term = search_term.trim();
-        if term.len() < 2 {
-            return Err(CustomError::new(
-                HttpCodeW::BadRequest,
-                "Search term must be at least 2 characters".to_string(),
-            ));
-        }
+        ProfileService::search_users_by_name(db, search_term).await
+    }
 
-        // Build LIKE pattern for case-insensitive partial matching
-        let pattern = format!("%{}%", term);
+    // Visit Management (Admin) - Service Layer Facade
 
-        // Query database
-        let profiles = UserProfile::find()
-            .filter(user_profile::Column::MiddleName.like(&pattern))
-            .order_by_asc(user_profile::Column::MiddleName)
-            .limit(50)
-            .all(db)
-            .await?;
+    pub async fn list_families(
+        db: &DatabaseConnection,
+        query: FamilyListQuery,
+    ) -> Result<Vec<VisitableFamilyResponse>, CustomError> {
+        VisitableFamilyService::list(db, query.limit, query.offset, query.search).await
+    }
 
-        // Map database models to DTOs
-        Ok(profiles.into_iter().map(|p| p.into()).collect())
+    pub async fn get_family(
+        db: &DatabaseConnection,
+        id: i64,
+    ) -> Result<VisitableFamilyResponse, CustomError> {
+        VisitableFamilyService::get_by_id(db, id).await
+    }
+
+    pub async fn create_family(
+        db: &DatabaseConnection,
+        req: CreateVisitableFamilyRequest,
+    ) -> Result<VisitableFamilyResponse, CustomError> {
+        VisitableFamilyService::create(db, req).await
+    }
+
+    pub async fn update_family(
+        db: &DatabaseConnection,
+        id: i64,
+        req: UpdateVisitableFamilyRequest,
+    ) -> Result<VisitableFamilyResponse, CustomError> {
+        VisitableFamilyService::update(db, id, req).await
+    }
+
+    pub async fn delete_family(db: &DatabaseConnection, id: i64) -> Result<(), CustomError> {
+        VisitableFamilyService::delete(db, id).await
+    }
+
+    pub async fn list_assignments(
+        db: &DatabaseConnection,
+        query: AssignmentListQuery,
+    ) -> Result<Vec<VisitAssignmentResponse>, CustomError> {
+        VisitAssignmentService::list_all_admin(db, query.limit, query.offset).await
+    }
+
+    pub async fn create_assignment(
+        db: &DatabaseConnection,
+        req: CreateVisitAssignmentRequest,
+    ) -> Result<VisitAssignmentResponse, CustomError> {
+        VisitAssignmentService::create(db, req).await
+    }
+
+    pub async fn delete_assignment(db: &DatabaseConnection, id: i64) -> Result<(), CustomError> {
+        VisitAssignmentService::delete(db, id).await
     }
 }
 

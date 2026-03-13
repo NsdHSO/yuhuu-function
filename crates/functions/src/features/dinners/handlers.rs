@@ -1,6 +1,6 @@
 use actix_web::{web, HttpResponse, Result};
 use http_response::{create_response, HttpCodeW};
-use models::internal::{AddParticipantRequest, CreateDinnerRequest};
+use models::internal::{AddParticipantRequest, CreateDinnerRequest, ListDinnersQuery};
 
 use super::service::DinnerService;
 
@@ -64,14 +64,4 @@ pub async fn remove_participant(
         HttpCodeW::OK,
     );
     Ok(HttpResponse::Ok().json(resp))
-}
-
-#[derive(serde::Deserialize)]
-pub struct ListDinnersQuery {
-    #[serde(default)]
-    pub page: i64,
-    #[serde(default)]
-    pub limit: i64,
-    #[serde(default)]
-    pub dinner_date: Option<String>,
 }

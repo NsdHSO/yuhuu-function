@@ -1,9 +1,9 @@
 use chrono::NaiveDate;
 use http_response::{CustomError, HttpCodeW};
 use models::dto::{user_profile, UserProfile};
-use models::internal::{CreateProfileRequest, ProfileResponse, UpdateProfileRequest};
+use models::internal::{CreateProfileRequest, ProfileResponse, UpdateProfileRequest, UserSearchResult};
 use sea_orm::ActiveValue::NotSet;
-use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, Set};
+use sea_orm::{ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, QueryFilter, QueryOrder, QuerySelect, Set};
 use user_profile::Column::UserId;
 use user_profile::Model;
 
@@ -203,5 +203,26 @@ impl ProfileService {
                 }),
             None => Ok(None),
         }
+    }
+
+    pub async fn search_users_by_name(
+        db: &DatabaseConnection,
+        search_term: &str,
+    ) -> Result<Vec<UserSearchResult>, CustomError> {
+        let term = search_term.trim();
+        if term.len() < 2 {
+            return Err(CustomError::new(
+                HttpCodeW::BadRequest,
+                "Search term must be at least 2 characters".to_string(),
+            ));
+        }
+        let pattern = format!("%{}%", term);
+        let profiles = UserProfile::find()
+            .filter(user_profile::Column::MiddleName.like(&pattern))
+            .order_by_asc(user_profile::Column::MiddleName)
+            .limit(50)
+            .all(db)
+            .await?;
+        Ok(profiles.into_iter().map(|p| p.into()).collect())
     }
 }

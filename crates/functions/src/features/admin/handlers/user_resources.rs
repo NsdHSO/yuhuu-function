@@ -8,11 +8,11 @@ use models::internal::{
     UpdateSpiritualMilestoneRequest, UpdateUserSkillRequest,
 };
 
-use super::super::family_relationships::service::FamilyRelationshipService;
-use super::super::membership_history::service::MembershipHistoryService;
-use super::super::spiritual_milestones::service::SpiritualMilestoneService;
-use super::super::user_skills::service::UserSkillService;
-use super::service::AdminService;
+use crate::features::family_relationships::service::FamilyRelationshipService;
+use crate::features::membership_history::service::MembershipHistoryService;
+use crate::features::spiritual_milestones::service::SpiritualMilestoneService;
+use crate::features::user_skills::service::UserSkillService;
+use crate::features::admin::service::AdminService;
 
 /// Search users by name (admin-only)
 ///

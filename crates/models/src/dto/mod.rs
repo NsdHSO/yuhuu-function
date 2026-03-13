@@ -18,6 +18,8 @@ pub mod user_ministry;
 pub mod user_profile;
 pub mod user_role;
 pub mod user_skill;
+pub mod visitable_family;
+pub mod visit_assignment;
 pub mod zone;
 
 // Re-export for convenience
@@ -68,5 +70,13 @@ pub use user_role::{
 };
 pub use user_skill::{
     ActiveModel as UserSkillActiveModel, Entity as UserSkill, Model as UserSkillModel,
+};
+pub use visitable_family::{
+    ActiveModel as VisitableFamilyActiveModel, Entity as VisitableFamily,
+    Model as VisitableFamilyModel,
+};
+pub use visit_assignment::{
+    ActiveModel as VisitAssignmentActiveModel, Entity as VisitAssignment,
+    Model as VisitAssignmentModel,
 };
 pub use zone::{ActiveModel as ZoneActiveModel, Entity as Zone, Model as ZoneModel};

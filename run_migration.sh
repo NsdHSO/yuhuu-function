@@ -17,7 +17,6 @@ if [[ -z "${DATABASE_URL:-}" ]]; then
 fi
 
 # Ask for schema (e.g., auth or public), default to 'auth'
-read -r -p "Database schema to use [auth] (e.g., auth or public): " DB_SCHEMA
 DB_SCHEMA="church"
 
 # Modify DATABASE_URL to set search_path to church schema
@@ -32,6 +31,7 @@ fi
 
 echo "Running database migrations against schema: ${DB_SCHEMA} ..."
 # Execute without printing the URL to avoid exposing credentials
-cargo run --manifest-path migration/Cargo.toml -- --database-url "$MODIFIED_URL" --database-schema "$DB_SCHEMA"
+# Note: Schema is configured in migration/src/lib.rs via migration_table_name()
+cargo run --manifest-path migration/Cargo.toml -- --database-url "$MODIFIED_URL"
 
 echo "Migrations completed!"

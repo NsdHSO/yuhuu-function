@@ -1,6 +1,16 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
+pub struct ListDinnersQuery {
+    #[serde(default)]
+    pub page: i64,
+    #[serde(default)]
+    pub limit: i64,
+    #[serde(default)]
+    pub dinner_date: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct CreateDinnerRequest {
     pub dinner_date: String,
     pub meal_type: String,

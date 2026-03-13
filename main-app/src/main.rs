@@ -11,6 +11,7 @@ use functions::{
     configure_admin, configure_bootstrap, configure_dinners, configure_family_relationships,
     configure_health, configure_membership_history, configure_profiles, configure_roles,
     configure_spiritual_milestones, configure_user_roles, configure_user_skills, configure_users,
+    configure_visits,
 };
 use graphql::{
     build_schema, graphql_handler, graphql_playground, strapi_proxy_handler, StrapiClient,
@@ -92,7 +93,8 @@ async fn main() -> std::io::Result<()> {
                     .configure(configure_spiritual_milestones)
                     .configure(configure_membership_history)
                     .configure(configure_user_skills)
-                    .configure(configure_admin),
+                    .configure(configure_admin)
+                    .configure(configure_visits),
             )
             .service(
                 web::resource("/graphql")

@@ -12,6 +12,8 @@ pub mod spiritual_milestone;
 pub mod user;
 pub mod user_role;
 pub mod user_skill;
+pub mod visitable_family;
+pub mod visit_assignment;
 
 pub use admin::*;
 pub use bootstrap::*;
@@ -24,3 +26,5 @@ pub use spiritual_milestone::*;
 pub use user::*;
 pub use user_role::*;
 pub use user_skill::*;
+pub use visitable_family::*;
+pub use visit_assignment::*;

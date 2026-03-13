@@ -21,6 +21,9 @@ mod m20260203_000018_create_spiritual_milestones_table;
 mod m20260203_000019_create_membership_history_table;
 mod m20260203_000020_create_user_skills_table;
 mod m20260203_000021_alter_user_profiles_add_education_fields;
+mod m20260312_000022_create_visit_status_enum;
+mod m20260312_000023_create_visitable_families_table;
+mod m20260312_000024_create_visit_assignments_table;
 
 pub struct Migrator;
 
@@ -49,6 +52,14 @@ impl MigratorTrait for Migrator {
             Box::new(m20260203_000019_create_membership_history_table::Migration),
             Box::new(m20260203_000020_create_user_skills_table::Migration),
             Box::new(m20260203_000021_alter_user_profiles_add_education_fields::Migration),
+            Box::new(m20260312_000022_create_visit_status_enum::Migration),
+            Box::new(m20260312_000023_create_visitable_families_table::Migration),
+            Box::new(m20260312_000024_create_visit_assignments_table::Migration),
         ]
+    }
+
+    // Override to store seaql_migrations table in church schema
+    fn migration_table_name() -> DynIden {
+        Alias::new("church.seaql_migrations").into_iden()
     }
 }

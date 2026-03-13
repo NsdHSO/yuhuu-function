@@ -1,11 +1,23 @@
 use actix_web::web;
 
-use super::handlers;
+use super::handlers::{self, visit_handlers};
 
 pub fn configure(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/admin")
             .route("/users/search", web::get().to(handlers::search_users))
+            // Visit Management (Admin)
+            .service(
+                web::scope("/visits")
+                    .route("/families", web::get().to(visit_handlers::list_families))
+                    .route("/families", web::post().to(visit_handlers::create_family))
+                    .route("/families/{id}", web::get().to(visit_handlers::get_family))
+                    .route("/families/{id}", web::put().to(visit_handlers::update_family))
+                    .route("/families/{id}", web::delete().to(visit_handlers::delete_family))
+                    .route("/assignments", web::get().to(visit_handlers::list_assignments))
+                    .route("/assignments", web::post().to(visit_handlers::create_assignment))
+                    .route("/assignments/{id}", web::delete().to(visit_handlers::delete_assignment)),
+            )
             .service(
                 web::scope("/users/{user_id}")
                     // Family Relationships

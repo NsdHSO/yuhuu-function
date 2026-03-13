@@ -10,6 +10,7 @@ pub mod spiritual_milestones;
 pub mod user_roles;
 pub mod user_skills;
 pub mod users;
+pub mod visits;
 
 pub use admin::configure_admin;
 pub use bootstrap::configure_bootstrap;
@@ -23,3 +24,4 @@ pub use spiritual_milestones::configure_spiritual_milestones;
 pub use user_roles::configure_user_roles;
 pub use user_skills::configure_user_skills;
 pub use users::configure_users;
+pub use visits::configure as configure_visits;

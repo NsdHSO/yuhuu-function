@@ -30,8 +30,9 @@ else
 fi
 
 echo "Running database migrations against schema: ${DB_SCHEMA} ..."
-# Execute without printing the URL to avoid exposing credentials
-# Note: Schema is configured in migration/src/lib.rs via migration_table_name()
-cargo run --manifest-path migration/Cargo.toml -- --database-url "$MODIFIED_URL"
+# Execute custom church-schema migration runner
+# This bypasses SeaORM CLI issues with schema-qualified migration tables
+export DATABASE_URL="$MODIFIED_URL"
+cargo run --manifest-path migration/Cargo.toml --bin run_church_migrations
 
 echo "Migrations completed!"

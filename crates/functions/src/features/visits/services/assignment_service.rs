@@ -7,7 +7,7 @@ use models::internal::{
 };
 use rust_decimal::Decimal;
 use sea_orm::{
-    ActiveModelTrait, ColumnTrait, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter,
+    ActiveModelTrait, ColumnTrait, Condition, DatabaseConnection, EntityTrait, PaginatorTrait, QueryFilter,
     QueryOrder, QuerySelect, Set,
 };
 use std::str::FromStr;
@@ -37,7 +37,9 @@ impl VisitAssignmentService {
         use models::dto::visit_assignment::Column;
         let count = VisitAssignment::find()
             .filter(Column::FamilyId.eq(family_id))
-            .filter(Column::Status.is_in(vec!["pending", "in_progress"]))
+            .filter(Condition::any()
+                .add(Column::Status.eq("pending"))
+                .add(Column::Status.eq("in_progress")))
             .count(db).await?;
         if count > 0 {
             return Err(CustomError::new(HttpCodeW::Conflict, "Family has active assignment".to_string()));

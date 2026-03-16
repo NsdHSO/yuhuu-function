@@ -11,10 +11,21 @@ path = "src/lib.rs"
 name = "migration"
 path = "src/main.rs"
 
+[[bin]]
+name = "run_church_migrations"
+path = "src/bin/run_church_migrations.rs"
+
 [dependencies]
 async-trait = "0.1"
 tokio = { workspace = true }
 uuid = { workspace = true }
+
+[dependencies.sea-orm]
+version = "1.1.5"
+features = [
+    "sqlx-postgres",
+    "runtime-tokio-native-tls",
+]
 
 [dependencies.sea-orm-migration]
 version = "1.1.11"
